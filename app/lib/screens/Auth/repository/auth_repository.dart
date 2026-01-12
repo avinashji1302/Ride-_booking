@@ -1,0 +1,60 @@
+import 'dart:convert';
+
+import 'package:app/config/network/api_repsonse.dart';
+import 'package:app/screens/Auth/model/otp_varify_model.dart';
+import 'package:app/screens/Auth/model/user_model.dart';
+import 'package:flutter/material.dart';
+
+import '../../../config/network/api_endpoints.dart';
+import '../../../config/network/http_client.dart';
+import '../model/signup_model.dart';
+
+class AuthRepository {
+  // Future<UserModel> register(SignupModel request) async {
+  //   final response = await HttpClient.post(
+  //    ApiEndpoints.register,
+  //     body: request.toJson(),
+  //   );
+
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     debugPrint("Sign up model: ${response.body}");
+  //     return UserModel.fromJson(
+  //       jsonDecode(response.body),
+  //     );
+  //   } else {
+  //     throw Exception("Registration failed");
+  //   }
+  // }
+
+
+  Future<SignUpResponse> register(SignupModel request) async {
+    final response = await HttpClient.post(
+     ApiEndpoints.register,
+      body: request.toJson(),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint("Sign up model: ${response.body}");
+      return SignUpResponse.fromJson(
+        jsonDecode(response.body),
+      );
+    } else {
+      throw Exception("Registration failed");
+    }
+  }
+
+   Future<ApiResponse<VarifyOtpUserResult>> verifySignUpOtp(VerifyOtpRequest request) async {
+  final response = await HttpClient.post(
+    ApiEndpoints.verifyOtp,
+    body: request.toJson(),
+  );
+
+  final json = jsonDecode(response.body);
+
+  return ApiResponse<VarifyOtpUserResult>.fromJson(
+    json,
+    (data) => VarifyOtpUserResult.fromJson(data),
+  );
+}
+
+}
