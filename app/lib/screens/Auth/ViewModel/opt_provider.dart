@@ -1,5 +1,6 @@
 import 'package:app/config/device/device_details.dart';
 import 'package:app/config/storage/auth_storage.dart';
+import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/Auth/model/otp_varify_model.dart';
 import 'package:app/screens/Auth/repository/auth_repository.dart';
@@ -8,11 +9,11 @@ import 'package:provider/provider.dart';
 
 class OptProvider extends ChangeNotifier {
   final AuthRepository _repo = AuthRepository();
-  final AuthStorage _storage = AuthStorage();
+    final AuthStorage _storage = AuthStorage();
   final TextEditingController otpMobile = TextEditingController();
 
-  bool loading = false;
-  String? error;
+    bool loading = false;
+    String? error;
   VarifyOtpUserResult? user;
 
   Future<bool> verifyOtp(BuildContext context) async {
@@ -53,10 +54,10 @@ final signupProvider =
       ScaffoldMessenger.of(context).showSnackBar(
            SnackBar(content: Text(response.message)),
         );
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => const Sigin()),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>  SignInPage()),
+        );
        
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,5 +73,14 @@ final signupProvider =
 
     notifyListeners();
     return true;
+  }
+
+
+    @override
+  void dispose() {
+    otpMobile.dispose();
+   
+
+    super.dispose();
   }
 }

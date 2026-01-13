@@ -1,14 +1,13 @@
 import 'package:app/config/colors/app_color.dart';
-import 'package:app/config/device/device_details.dart';
-import 'package:app/config/validars/validators.dart';
-import 'package:app/screens/Auth/View/signIn/set_password_page.dart';
+import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/opt_provider.dart';
+import 'package:app/screens/Auth/model/forget_passowrd_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PhoneVerification extends StatelessWidget {
+class OtpPageVarififcation extends StatelessWidget {
 
-  const  PhoneVerification({super.key});
+  const  OtpPageVarififcation({super.key});
   @override
   Widget build(BuildContext context) {
    
@@ -20,8 +19,8 @@ class PhoneVerification extends StatelessWidget {
         foregroundColor: Colors.black,
         leading: const BackButton(),
       ),
-      body: Consumer<OptProvider>(
-        builder: (BuildContext context, OptProvider controller, Widget? child) { 
+      body: Consumer<ForgetPasswordProvider>(
+        builder: (BuildContext context, ForgetPasswordProvider controller, Widget? child) { 
 
            return Padding(
           padding: const EdgeInsets.all(24),
@@ -79,9 +78,9 @@ class PhoneVerification extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: ()  async{
+                onPressed: ()  {
                  
-             context.read<OptProvider>().verifyOtp(context);
+               controller.varifyForgetPasswordOtp(context);
                 },
                 child: Text("Varify" , style: TextStyle(color: Colors.white),),
               ),

@@ -1,5 +1,6 @@
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/validars/validators.dart';
+import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:app/screens/Auth/widgets/social_widget.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+  
+
+  const SignUpScreen({super.key });
 
   @override
   Widget build(BuildContext context) {
@@ -187,19 +190,24 @@ class SignUpScreen extends StatelessWidget {
 
                     /// Footer
                     Center(
-                      child: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(color: Colors.black),
-                          children: [
-                            TextSpan(text: "Already have an account? "),
-                            TextSpan(
-                              text: "Sign in",
-                              style: TextStyle(
-                                color: AppColor.primaryYellow,
-                                fontWeight: FontWeight.bold,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage()));
+                        },
+                        child: RichText(
+                          text: const TextSpan(
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(text: "Already have an account? "),
+                              TextSpan(
+                                text: "Sign in",
+                                style: TextStyle(
+                                  color: AppColor.primaryYellow,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

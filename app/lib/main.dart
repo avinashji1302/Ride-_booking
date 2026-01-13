@@ -1,7 +1,9 @@
 
 import 'package:app/screens/Auth/View/signup/phone_verification.dart';
 import 'package:app/screens/Auth/View/signup/signup_page.dart';
+import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/opt_provider.dart';
+import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,7 +24,8 @@ void main()  async{
       providers: [
          ChangeNotifierProvider(create: (_) => SignupProvider()),
          ChangeNotifierProvider(create: (_) => OptProvider()),
-        // ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => SignInProvider()),
+        ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
       ],
        child: MyApp(),
     ),
@@ -39,7 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

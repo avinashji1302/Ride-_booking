@@ -17,7 +17,7 @@ class SignupProvider extends ChangeNotifier {
   final TextEditingController password = TextEditingController();
   final TextEditingController countryCode = TextEditingController(text: "91");
 
-  // ✅ Form key for validation
+  
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Future<bool> register(BuildContext context) async {
@@ -65,6 +65,8 @@ class SignupProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Something went wrong")),
         );
+
+        debugPrint("Resonse : ${response.message}");
         return false;
       }
     } catch (e) {

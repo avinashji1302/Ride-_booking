@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              /// Login Button
+              /// Login Button with email
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -86,10 +86,34 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUpScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage()));
                   },
                   child: const Text(
-                    "Log in",
+                    "Log in with email",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColor.primaryYellow,
+                    ),
+                  ),
+                ),
+              ),
+const SizedBox(height: 15),
+                /// Login Button with phone
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColor.primaryYellow),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage(isPhone: true,)));
+                  },
+                  child: const Text(
+                    "Log in with phone",
                     style: TextStyle(
                       fontSize: 16,
                       color: AppColor.primaryYellow,
