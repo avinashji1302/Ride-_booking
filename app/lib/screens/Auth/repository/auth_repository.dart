@@ -5,7 +5,6 @@ import 'package:app/screens/Auth/model/forget_passowrd_model.dart';
 import 'package:app/screens/Auth/model/otp_varify_model.dart';
 import 'package:app/screens/Auth/model/reset_password_model.dart';
 import 'package:app/screens/Auth/model/signin_model.dart';
-import 'package:app/screens/Auth/model/user_model.dart';
 import 'package:app/screens/Auth/model/varifty_user_forget_password_model.dart';
 import 'package:flutter/material.dart';
 

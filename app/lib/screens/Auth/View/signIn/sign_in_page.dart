@@ -1,19 +1,21 @@
 import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
 import 'package:app/screens/Auth/View/signIn/varify_email_phone_page.dart';
 import 'package:app/screens/Auth/View/signup/signup_page.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:app/screens/Auth/widgets/social_widget.dart';
+import 'package:app/screens/home/view/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
-   bool? isPhone;
+  bool? isPhone;
 
-   SignInPage({super.key ,  this.isPhone=false});
-   
+  SignInPage({super.key, this.isPhone = false});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,25 +44,26 @@ class SignInPage extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
-                  !isPhone! ?    InputFieldWidget(
-                        controller: controller.emailController,
-                        hint: "Email",
-                        validator: Validators.validateEmail,
-                      keyboardType: TextInputType.emailAddress,
-                       
-                        prefixIcon: const Icon(Icons.email),
-                      ):
-                      InputFieldWidget(
-                        controller: controller.emailController,
-                        hint: "Phone",
-                        validator: Validators.validatePhone,
-                      keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        prefixIcon: const Icon(Icons.phone),
-                      ),
+                      !isPhone!
+                          ? InputFieldWidget(
+                              controller: controller.emailController,
+                              hint: "Email",
+                              validator: Validators.validateEmail,
+                              keyboardType: TextInputType.emailAddress,
+
+                              prefixIcon: const Icon(Icons.email),
+                            )
+                          : InputFieldWidget(
+                              controller: controller.emailController,
+                              hint: "Phone",
+                              validator: Validators.validatePhone,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              prefixIcon: const Icon(Icons.phone),
+                            ),
                       SizedBox(height: 10),
                       InputFieldWidget(
                         controller: controller.passController,
@@ -99,9 +102,34 @@ class SignInPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: () {
-                            controller.signIn(context , isPhone!);
-                          },
+                          onPressed: () async {
+                                  final result = await controller.signIn(
+                                    isPhone!,
+                                  );
+
+                                  if (result.success) {
+                                    AppSnackBar.show(
+                                     
+                                      context,
+                                      message: result.message,
+                                      backgroundColor: Colors.green,
+                                    );
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => HomePage(),
+                                      ),
+                                    );
+                                  } else {
+                                    AppSnackBar.show(
+                                      context,
+                                      message: result.message,
+                                      backgroundColor: Colors.red,
+                                    );
+                                  }
+                                },
+
                           child: const Text(
                             "Sign in",
                             style: TextStyle(color: Colors.white),
@@ -141,8 +169,13 @@ class SignInPage extends StatelessWidget {
                       /// Footer
                       Center(
                         child: GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUpScreen()));
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignUpScreen(),
+                              ),
+                            );
                           },
                           child: RichText(
                             text: const TextSpan(

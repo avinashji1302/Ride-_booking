@@ -1,23 +1,19 @@
 import 'package:app/config/device/device_details.dart';
-import 'package:app/config/network/http_client.dart';
+import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/Auth/model/signin_model.dart';
 import 'package:app/screens/Auth/repository/auth_repository.dart';
-import 'package:app/screens/home/view/home_page.dart';
 import 'package:flutter/material.dart';
 
 class SignInProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
   final AuthStorage _storage = AuthStorage();
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
  bool loading = true;
     String? error;
-  Future<bool> signIn(BuildContext context ,  bool isPhone) async {
+  Future<ApiResponse> signIn(  bool isPhone) async {
     final deviceId = await DeviceDetails.getDeviceId();
-   
- 
     notifyListeners();
     try {
       final response = await _authRepository.signIn(
@@ -33,47 +29,37 @@ class SignInProvider extends ChangeNotifier {
         ),
       );
 
-      loading = false;
+       loading = false;
 
-      final message = response.message;
-      final loginResposne = response.data;
-
-      debugPrint("data : $emailController , $passController $deviceId ${response.data} $isPhone");
-
-      if (response.success) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+        if (response.success && response.data != null) {
+        await _storage.saveSession(
+          accessToken: response.data!.token,
+          refreshToken: response.data!.refreshToken,
         );
 
         emailController.clear();
         passController.clear();
-        return true;
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+
+        return ApiResponse(
+          success: true,
+          message: response.message,
+        );
       }
 
-      await _storage.saveSession(
-        accessToken: loginResposne!.token,
-        refreshToken: loginResposne.refreshToken,
+      return ApiResponse(
+        success: false,
+        message: response.message,
+        data: response.data
       );
-
-      return false;
     } catch (e) {
       loading = false;
       error = e.toString();
       notifyListeners();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}")),
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong",
       );
-      return false;
-    
     }
   }
 
@@ -82,7 +68,6 @@ class SignInProvider extends ChangeNotifier {
   void dispose() {
     emailController.dispose();
     passController.dispose();
-
     super.dispose();
   }
 }
