@@ -2,7 +2,7 @@
 import 'package:app/screens/Auth/View/signup/phone_verification.dart';
 import 'package:app/screens/Auth/View/signup/signup_page.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
-import 'package:app/screens/Auth/ViewModel/opt_provider.dart';
+import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
@@ -23,7 +23,7 @@ void main()  async{
     MultiProvider(
       providers: [
          ChangeNotifierProvider(create: (_) => SignupProvider()),
-         ChangeNotifierProvider(create: (_) => OptProvider()),
+         ChangeNotifierProvider(create: (_) => SignUpPhoneVarificationProvider()),
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
       ],

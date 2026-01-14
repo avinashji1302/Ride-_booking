@@ -10,12 +10,18 @@ class SignInProvider extends ChangeNotifier {
   final AuthStorage _storage = AuthStorage();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
- bool loading = true;
-    String? error;
+ bool loading = false;
+ String? error;
+
+
   Future<ApiResponse> signIn(  bool isPhone) async {
-    final deviceId = await DeviceDetails.getDeviceId();
+   
+    loading = true;
+    error = null;
     notifyListeners();
+
     try {
+       final deviceId = await DeviceDetails.getDeviceId();
       final response = await _authRepository.signIn(
         LoginRequest(
           type: isPhone? "mobile":"email",
@@ -29,7 +35,8 @@ class SignInProvider extends ChangeNotifier {
         ),
       );
 
-       loading = false;
+      loading = false;
+      notifyListeners();
 
         if (response.success && response.data != null) {
         await _storage.saveSession(

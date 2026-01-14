@@ -1,6 +1,8 @@
 import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
+import 'package:app/screens/Auth/View/signup/phone_verification.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:app/screens/Auth/widgets/social_widget.dart';
@@ -9,9 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
-  
-
-  const SignUpScreen({super.key });
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        
+
                         // Phone number
                         Expanded(
                           child: InputFieldWidget(
@@ -139,8 +139,41 @@ class SignUpScreen extends StatelessWidget {
                         onPressed: provider.isLoading
                             ? null
                             : () async {
-                                await provider.register(context);
+                                if (!provider.formKey.currentState!
+                                    .validate()) {
+                                  AppSnackBar.show(
+                                    context,
+                                    message:
+                                        "Please fix the errors in the form",
+                                    backgroundColor: Colors.red,
+                                  );
+                                  return;
+                                }
+
+                                final result = await provider.register();
+
+                                if (result.success) {
+                                  AppSnackBar.show(
+                                    context,
+                                    message: result.message,
+                                    backgroundColor: Colors.green,
+                                  );
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const PhoneVerification(),
+                                    ),
+                                  );
+                                } else {
+                                  AppSnackBar.show(
+                                    context,
+                                    message: result.message,
+                                    backgroundColor: Colors.red,
+                                  );
+                                }
                               },
+
                         child: provider.isLoading
                             ? const SizedBox(
                                 height: 20,
@@ -192,7 +225,12 @@ class SignUpScreen extends StatelessWidget {
                     Center(
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignInPage(),
+                            ),
+                          );
                         },
                         child: RichText(
                           text: const TextSpan(

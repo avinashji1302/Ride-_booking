@@ -1,7 +1,9 @@
 import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
 import 'package:app/screens/Auth/View/signIn/forget_pasword_page.dart';
 import 'package:app/screens/Auth/View/signIn/forgetten_password_list.dart';
+import 'package:app/screens/Auth/View/signIn/otp_page_varififcation.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 
@@ -60,10 +62,29 @@ class VarifyEmailPhonePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
-                        print("forget Password");
-                        controller.forgetPassword(context);
-                      },
+                     onPressed: () async {
+  final result = await controller.forgetPassword();
+
+  if (result.success) {
+    AppSnackBar.show(
+      context,
+      message: result.message,
+      backgroundColor: Colors.green,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const OtpPageVarififcation()),
+    );
+  } else {
+    AppSnackBar.show(
+      context,
+      message: result.message,
+      backgroundColor: Colors.red,
+    );
+  }
+},
+
                       child: Text(
                         "Send OTP",
                         style: TextStyle(color: Colors.white),

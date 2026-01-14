@@ -1,4 +1,4 @@
-import 'package:app/screens/Auth/View/signup/phone_verification.dart';
+import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/Auth/model/user_model.dart';
 import 'package:app/screens/Auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import '../model/signup_model.dart';
 
 class SignupProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
+
   UserModel? userDetails;
 
   bool isLoading = false;
@@ -15,23 +16,12 @@ class SignupProvider extends ChangeNotifier {
   final TextEditingController email = TextEditingController();
   final TextEditingController phone = TextEditingController();
   final TextEditingController password = TextEditingController();
-  final TextEditingController countryCode = TextEditingController(text: "91");
+  final TextEditingController countryCode =
+      TextEditingController(text: "91");
 
-  
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<bool> register(BuildContext context) async {
- 
-    if (!formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please fix the errors in the form"),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return false;
-    }
-
+  Future<ApiResponse> register() async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
@@ -46,38 +36,33 @@ class SignupProvider extends ChangeNotifier {
           password: password.text,
         ),
       );
-      userDetails = response.user;
-
-      debugPrint("Response : $userDetails ${response.user}");
-
-      final success = response.success;
 
       isLoading = false;
       notifyListeners();
 
-      if (success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PhoneVerification()),
-        );
-        return true;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Something went wrong")),
-        );
+      if (response.success && response.user != null) {
+        userDetails = response.user;
 
-        debugPrint("Resonse : ${response.message}");
-        return false;
+        return ApiResponse(
+          success: true,
+          message: response.message,
+          data: response.user,
+        );
       }
+
+      return ApiResponse(
+        success: false,
+        message: response.message,
+      );
     } catch (e) {
       isLoading = false;
       errorMessage = e.toString();
       notifyListeners();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}")),
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong",
       );
-      return false;
     }
   }
 
