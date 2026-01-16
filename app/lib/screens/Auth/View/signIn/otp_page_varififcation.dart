@@ -49,16 +49,16 @@ class OtpPageVarififcation extends StatelessWidget {
                     const SizedBox(height: 40),
 
                     /// OTP boxes
-                    TextField(
-                      controller: controller.otpController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 6,
-                      decoration: const InputDecoration(
-                        hintText: "Enter OTP",
-                        border: OutlineInputBorder(),
-                        counterText: "",
-                      ),
-                    ),
+                    // TextField(
+                    //   controller: controller.otpController,
+                    //   keyboardType: TextInputType.number,
+                    //   maxLength: 6,
+                    //   decoration: const InputDecoration(
+                    //     hintText: "Enter OTP",
+                    //     border: OutlineInputBorder(),
+                    //     counterText: "",
+                    //   ),
+                    // ),
 
                     const SizedBox(height: 20),
 
@@ -91,6 +91,8 @@ class OtpPageVarififcation extends StatelessWidget {
                         final result = await controller
                             .verifyForgetPasswordOtp();
 
+                            debugPrint("result : $result");
+
                         if (result.success) {
                           AppSnackBar.show(
                             context,
@@ -113,7 +115,16 @@ class OtpPageVarififcation extends StatelessWidget {
                         }
                       },
 
-                      child: Text(
+                      child: controller.loading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            :  Text(
                         "Varify",
                         style: TextStyle(color: Colors.white),
                       ),

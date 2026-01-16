@@ -1,6 +1,6 @@
 class ApiEndpoints {
-  static const baseUrl = "http://192.168.2.239:5678";
-    // static const baseUrl = "http://192.168.2.239:5678";
+  // static const baseUrl = "http://192.168.2.239:5678";
+    static const baseUrl = "http://192.168.2.239:5678";
     
 // 192.168.2.239
 
@@ -11,5 +11,6 @@ class ApiEndpoints {
   static const forgotPassword = "$baseUrl/v1/user/forgotPassword";
   static const verifyForgotOtp = "$baseUrl/v1/user/verifyUserForgotPasswordOTP";
   static const resetPassword = "$baseUrl/v1/user/resetPassword";
-  static const getProfile = "/v1/user/getProfile";
+  static const estimate = "$baseUrl/v1/user/ride/estimate";
+
 }

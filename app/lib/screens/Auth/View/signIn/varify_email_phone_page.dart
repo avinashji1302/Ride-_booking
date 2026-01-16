@@ -62,30 +62,41 @@ class VarifyEmailPhonePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                     onPressed: () async {
-  final result = await controller.forgetPassword();
+                      onPressed: () async {
+                        final result = await controller.forgetPassword();
 
-  if (result.success) {
-    AppSnackBar.show(
-      context,
-      message: result.message,
-      backgroundColor: Colors.green,
-    );
+                        if (result.success) {
+                          AppSnackBar.show(
+                            context,
+                            message: result.message,
+                            backgroundColor: Colors.green,
+                          );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const OtpPageVarififcation()),
-    );
-  } else {
-    AppSnackBar.show(
-      context,
-      message: result.message,
-      backgroundColor: Colors.red,
-    );
-  }
-},
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const OtpPageVarififcation(),
+                            ),
+                          );
+                        } else {
+                          AppSnackBar.show(
+                            context,
+                            message: result.message,
+                            backgroundColor: Colors.red,
+                          );
+                        }
+                      },
 
-                      child: Text(
+                       child: controller.loading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            :  Text(
                         "Send OTP",
                         style: TextStyle(color: Colors.white),
                       ),

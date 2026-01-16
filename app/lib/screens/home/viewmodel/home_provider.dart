@@ -1,51 +1,111 @@
-// import 'dart:convert';
+import 'package:app/config/network/api_repsonse.dart';
+import 'package:app/screens/home/model/ride_estimate_request_model.dart';
+import 'package:app/screens/home/model/ride_estimate_result_model.dart';
+import 'package:app/screens/home/model/vehicle_fare_model.dart';
+import 'package:app/screens/home/respository/home_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
-// import 'package:app/config/api_constants.dart';
-// import 'package:app/config/shared_pref.dart';
-// import 'package:app/screens/home/model/home_model.dart';
-// import 'package:flutter/foundation.dart';
-// // import 'package:http/http.dart' as http show get;
+enum HomeFlow { searchDestination, selectRide }
 
-// class HomeProvider extends ChangeNotifier {
-//   List<Order> orders = [];
-//   bool isLoading = false;
-//   String? error;
+class HomeProvider extends ChangeNotifier {
+  final HomeRepository homeRepository = HomeRepository();
+ final  List<RideEstimateResultModel> _allEstemiateREsult = [];
+ final List<VehicleFare> _allVehicleFare = [];
 
-//   Future<void> getOrders() async {
-//     isLoading = true;
-//     notifyListeners();
+  List<RideEstimateResultModel> get allEstimatedResult => _allEstemiateREsult;
+  List<VehicleFare> get allVehicleFares => _allVehicleFare;
 
-//     try {
-//       final token = await SharedPref().getToken() ?? "";
-//       debugPrint("Token in url: ${ApiConstants.baseUrl}/orders/my");
+  Position? position;
 
-//       debugPrint("Token in HomeProvider: $token");
+  Future<void> permisson() async {
+    LocationPermission permission;
 
-//       final response = await http.get(
-//         Uri.parse("${ApiConstants.baseUrl}/orders/my"),
-//         headers: {
-//           "Authorization": "Bearer $token",
-//         },
-//       );
+    permission = await Geolocator.checkPermission();
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         orders = (data['orders']['data'] as List)
-//             .map((e) => Order.fromJson(e))
-//             .toList();
-//         error = null;
-//       } else {
-//         error = "Failed to load orders";
-//       }
-//     } catch (e) {
-//       error = e.toString();
-//     }
+    debugPrint("chekc permsoim : $permission");
 
-//     isLoading = false;
-//     notifyListeners();
-//   }
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        debugPrint("User denied the permisoon");
+      } else {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+        );
+        debugPrint(
+          "location is : ${position!.altitude} ${position!.longitude}",
+        );
+      }
+    } else {
+      position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
 
+      debugPrint(
+        "location  else is : ${position!.altitude} ${position!.longitude}",
+      );
+    }
 
-  
-// }
+    notifyListeners();
+  }
 
+  HomeFlow _flow = HomeFlow.searchDestination;
+  HomeFlow get flow => _flow;
+
+  void goToRideSelection() {
+    _flow = HomeFlow.selectRide;
+    notifyListeners();
+  }
+
+  void goBackToSearch() {
+    _flow = HomeFlow.searchDestination;
+    notifyListeners();
+  }
+
+  //----------------------------------Estimate API Call---------------------------------------
+
+  bool loading = false;
+
+  Future<ApiResponse> getAllEstimtedData() async {
+    print(
+      "location lat and long : ${position!.latitude} ${position!.longitude}",
+    );
+    loading = true;
+    ChangeNotifier();
+
+    try {
+      final response = await homeRepository.totalEstimateRide(
+        RideEstimateRequestModel(
+          pickupLocation: RideLocation(
+            latitude: position!.latitude,
+            longitude: position!.longitude,
+            address: "Sindhi Camp bus stop , Jaipur ",
+          ),
+          dropLocation: RideLocation(
+            latitude: 77.209,
+            longitude: 28.6139,
+            address: " Malvie Nagar , Sector-5 Jaipur",
+          ),
+        ),
+      );
+
+      loading = false;
+
+      if (response.data != null) {
+        _allEstemiateREsult.add(response.data!);
+        _allVehicleFare.addAll(response.data!.allVehicleFares);
+      }
+
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+
+      notifyListeners();
+
+      return ApiResponse(success: false, message: "Something went wrong ");
+    }
+  }
+}

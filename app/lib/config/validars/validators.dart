@@ -49,9 +49,9 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters';
-    }
+    // if (value.length < 8) {
+    //   return 'Password must be at least 8 characters';
+    // }
     // if (!RegExp(r'[A-Z]').hasMatch(value)) {
     //   return 'Password must contain at least one uppercase letter';
     // }

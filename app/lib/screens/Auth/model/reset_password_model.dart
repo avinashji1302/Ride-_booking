@@ -9,13 +9,13 @@ class ResetPasswordModel {
     required this.confirmPassword,
   });
 
-  factory ResetPasswordModel.fromJson(Map<String, dynamic> json) {
-    return ResetPasswordModel(
-      email: json['email'] ?? '',
-      newPassword: json['newPassword'] ?? '',
-      confirmPassword: json['confirmPassword'] ?? '',
-    );
-  }
+  // factory ResetPasswordModel.fromJson(Map<String, dynamic> json) {
+  //   return ResetPasswordModel(
+  //     email: json['email'] ?? '',
+  //     newPassword: json['newPassword'] ?? '',
+  //     confirmPassword: json['confirmPassword'] ?? '',
+  //   );
+  // }
 
   Map<String, dynamic> toJson() {
     return {

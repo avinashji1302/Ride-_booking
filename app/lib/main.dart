@@ -1,48 +1,107 @@
-
-import 'package:app/screens/Auth/View/signup/phone_verification.dart';
-import 'package:app/screens/Auth/View/signup/signup_page.dart';
+import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
+import 'package:app/screens/home/view/home_page.dart';
+import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
-void main()  async{
-
-     WidgetsFlutterBinding.ensureInitialized();
-   //  await Firebase.initializeApp();
-
-     
-  runApp(
-    MultiProvider(
-      providers: [
-         ChangeNotifierProvider(create: (_) => SignupProvider()),
-         ChangeNotifierProvider(create: (_) => SignUpPhoneVarificationProvider()),
-        ChangeNotifierProvider(create: (_) => SignInProvider()),
-        ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
-      ],
-       child: MyApp(),
-    ),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // ✅ Initialize Firebase (uncomment when needed)
+  // await Firebase.initializeApp();
+  
+  runApp(const MyApp());
 }
-
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SignupProvider()),
+        ChangeNotifierProvider(create: (_) => SignUpPhoneVarificationProvider()),
+        ChangeNotifierProvider(create: (_) => SignInProvider()),
+        ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
+         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        // ✅ Don't initialize ResetPasswordProvider here - it needs parameters
+        // ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Your App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+        ),
+        // ✅ Use AuthCheck widget to determine initial screen
+        home: const AuthCheck(),
+      ),
     );
+  }
+}
+
+// ✅ Widget to check authentication status
+class AuthCheck extends StatefulWidget {
+  const AuthCheck({super.key});
+
+  @override
+  State<AuthCheck> createState() => _AuthCheckState();
+}
+
+class _AuthCheckState extends State<AuthCheck> {
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    try {
+      final authStorage = AuthStorage();
+      final accessToken = await authStorage.getAccessToken();
+      
+      debugPrint("📱 Access Token: $accessToken");
+
+      setState(() {
+        _isLoggedIn = accessToken != null && accessToken.isNotEmpty;
+        _isLoading = false;
+      });
+
+      debugPrint("✅ Login Status: ${_isLoggedIn ? 'Logged In' : 'Not Logged In'}");
+    } catch (e) {
+      debugPrint("❌ Error checking login status: $e");
+      setState(() {
+        _isLoggedIn = false;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show loading indicator while checking auth
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // Navigate to appropriate screen based on login status
+    return _isLoggedIn 
+        ? const HomePage()  // ✅ User is logged in
+        : const WelcomeScreen(); // ✅ User is not logged in
   }
 }

@@ -122,7 +122,7 @@ class AuthRepository {
     ResetPasswordModel request,
   ) async {
     final response = await HttpClient.post(
-      ApiEndpoints.verifyForgotOtp,
+      ApiEndpoints.resetPassword,
       body: request.toJson(),
     );
 

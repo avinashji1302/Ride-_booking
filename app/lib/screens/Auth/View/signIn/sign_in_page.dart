@@ -103,34 +103,38 @@ class SignInPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-                                  final result = await controller.signIn(
-                                    isPhone!,
-                                  );
+                            final result = await controller.signIn(isPhone!);
 
-                                  if (result.success) {
-                                    AppSnackBar.show(
-                                     
-                                      context,
-                                      message: result.message,
-                                      backgroundColor: Colors.green,
-                                    );
+                            if (result.success) {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.green,
+                              );
 
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => HomePage(),
-                                      ),
-                                    );
-                                  } else {
-                                    AppSnackBar.show(
-                                      context,
-                                      message: result.message,
-                                      backgroundColor: Colors.red,
-                                    );
-                                  }
-                                },
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (_) => HomePage()),
+                              );
+                            } else {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.red,
+                              );
+                            }
+                          },
 
-                          child: const Text(
+                          child: controller.loading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            :    const Text(
                             "Sign in",
                             style: TextStyle(color: Colors.white),
                           ),
