@@ -69,7 +69,7 @@ class SignInResponse {
   final bool notifications;
   final bool forceLogout;
   final int wallet;
-  final int cancellationPenalty;
+  final double cancellationPenalty;
   final List<dynamic> address;
   final String createdAt;
   final String updatedAt;
@@ -121,7 +121,7 @@ class SignInResponse {
       notifications: json['notifications'] ?? false,
       forceLogout: json['forceLogout'] ?? false,
       wallet: json['wallet'] ?? 0,
-      cancellationPenalty: json['cancellationPenalty'] ?? 0,
+      cancellationPenalty: json['cancellationPenalty'] ?? 0.0,
       address: json['address'] ?? [],
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',

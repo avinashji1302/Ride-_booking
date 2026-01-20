@@ -1,61 +1,63 @@
-import 'package:app/config/helper/widgets/ride_selection.dart';
-import 'package:app/config/helper/widgets/sctollable_card.dart';
+import 'package:app/screens/home/widgets/confirmed_ride.dart';
+import 'package:app/screens/home/widgets/ride_selection.dart';
+import 'package:app/screens/home/widgets/sctollable_card.dart';
 import 'package:app/screens/home/view/book_ride_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:app/screens/home/widgets/waiting_driver.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    /// 🔥 Check location once app opens
+    Future.microtask(() {
+      context.read<HomeProvider>().initLocation();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<HomeProvider>(
-        builder:
-            (BuildContext context,  controller, Widget? child) {
-              return Stack(
-        children: [
-           GoogleMap(initialCameraPosition: _kGooglePlex),
-
-           Positioned(
-            top: 100,
-            left: 100,
-             child: GestureDetector(
-              onTap: () async{
-                debugPrint("Tapped::");
-               await controller.permisson();
-              },
-              child: Icon(Icons.home , size: 80,)),
-           ),
-          if (controller.flow == HomeFlow.searchDestination)
-            const SctollableCard(),
-          if (controller.flow == HomeFlow.selectRide)
-            const RideSelectionSheet(),
-        ],
-              );
-            },
-      ),
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        clipBehavior: Clip.antiAlias,
-
-        child: SizedBox(
-          height: kBottomNavigationBarHeight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+        builder: (context, controller, _) {
+          return Stack(
             children: [
-              GestureDetector(onTap: () {}, child: Icon(Icons.home, size: 32)),
-              Icon(Icons.access_alarm, size: 32),
-              Icon(Icons.person, size: 32),
+              GoogleMap(
+                onMapCreated: controller.onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(20.5937, 78.9629), // India center
+                  zoom: 6,
+                ),
+
+                markers: controller.marker,
+              ),
+
+              if (controller.flow == HomeFlow.searchDestination)
+                    SctollableCard(),
+
+              if (controller.flow == HomeFlow.selectRide)
+                RideSelectionSheet(
+                  id: controller.allEstimatedResult!.ride.id.toString(),
+                ),
+
+              if (controller.flow == HomeFlow.waitingDriver)
+                WaitingForDriverSheet(),
+
+              if (controller.flow == HomeFlow.rideConfirmed) ConfirmedRide(),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }

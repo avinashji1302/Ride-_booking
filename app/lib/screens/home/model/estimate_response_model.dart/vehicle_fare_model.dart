@@ -1,4 +1,4 @@
-import 'package:app/screens/home/model/fare_breakdown_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/fare_breakdown_model.dart';
 
 class VehicleFare {
   final String vehicleType;

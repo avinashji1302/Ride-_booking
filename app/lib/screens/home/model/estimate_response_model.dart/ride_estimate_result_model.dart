@@ -1,5 +1,5 @@
-import 'package:app/screens/home/model/ride_model.dart';
-import 'package:app/screens/home/model/vehicle_fare_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/ride_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
 
 class RideEstimateResultModel {
   final Ride ride;

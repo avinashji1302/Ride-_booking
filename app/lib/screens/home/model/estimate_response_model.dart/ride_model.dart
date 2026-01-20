@@ -1,5 +1,5 @@
-import 'package:app/screens/home/model/estimated_fare_model.dart';
-import 'package:app/screens/home/model/location_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/estimated_fare_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/location_model.dart';
 
 class Ride {
   final String id;

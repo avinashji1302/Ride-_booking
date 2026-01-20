@@ -1,8 +1,11 @@
+import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 class RideSelectionSheet extends StatelessWidget {
-  const RideSelectionSheet({super.key});
+  final String id;
+  const RideSelectionSheet({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,11 @@ class RideSelectionSheet extends StatelessWidget {
                     icon: Icons.my_location,
                     iconColor: Colors.green,
                     hint: "Current Location",
-                    value: homeProvider.allEstimatedResult[0].ride.pickupLocation.address,
+                    value: homeProvider
+                        .allEstimatedResult!
+                        .ride
+                        .pickupLocation
+                        .address,
                   ),
 
                   const SizedBox(height: 12),
@@ -36,7 +43,11 @@ class RideSelectionSheet extends StatelessWidget {
                     icon: Icons.location_on,
                     iconColor: Colors.red,
                     hint: "Destination Location",
-                    value: homeProvider.allEstimatedResult[0].ride.dropLocation.address,
+                    value: homeProvider
+                        .allEstimatedResult!
+                        .ride
+                        .dropLocation
+                        .address,
                   ),
 
                   const SizedBox(height: 10),
@@ -50,7 +61,8 @@ class RideSelectionSheet extends StatelessWidget {
                         itemCount: homeProvider.allVehicleFares.length,
                         itemBuilder: (context, index) {
                           final data = homeProvider.allVehicleFares[index];
-                      
+                          homeProvider.vehicleType = data.vehicleType;
+
                           return ListTile(
                             leading: const Icon(Icons.directions_car),
                             title: Text(data.vehicleType),
@@ -66,7 +78,14 @@ class RideSelectionSheet extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final result = await homeProvider.createRide(id);
+                        if (result.success) {
+                          homeProvider.goToWaiting();
+                        } else {
+                          AppSnackBar.show(context, message: result.message);
+                        }
+                      },
                       child: const Text("Book Ride"),
                     ),
                   ),
@@ -79,8 +98,6 @@ class RideSelectionSheet extends StatelessWidget {
     );
   }
 }
-
-
 
 class _LocationTextField extends StatelessWidget {
   final IconData icon;

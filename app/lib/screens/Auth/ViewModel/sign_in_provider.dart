@@ -1,3 +1,4 @@
+import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/device/device_details.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/config/storage/auth_storage.dart';
@@ -8,8 +9,8 @@ import 'package:flutter/material.dart';
 class SignInProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
   final AuthStorage _storage = AuthStorage();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: "avinash@gmail.com");
+  final TextEditingController passController = TextEditingController(text: "avinash");
  bool loading = false;
  String? error;
 
@@ -44,14 +45,23 @@ class SignInProvider extends ChangeNotifier {
           refreshToken: response.data!.refreshToken,
         );
 
+
+       
         emailController.clear();
         passController.clear();
+
+        debugPrint("data : ${response.data!.id}");
+final token = await AuthStorage().getAccessToken();
+final id= response.data!.id;
+         SocketService().connect(token! , id);
 
         return ApiResponse(
           success: true,
           message: response.message,
         );
       }
+
+      debugPrint("errror : ${response.message} ${response.success}");
 
       return ApiResponse(
         success: false,
@@ -62,10 +72,10 @@ class SignInProvider extends ChangeNotifier {
       loading = false;
       error = e.toString();
       notifyListeners();
-
+     debugPrint("somethign : $e");
       return ApiResponse(
         success: false,
-        message: "Something went wrong",
+        message: "Something went wrong $e",
       );
     }
   }

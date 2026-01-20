@@ -72,7 +72,7 @@ class AuthRepository {
     debugPrint("respons e: $response");
     final json = jsonDecode(response.body);
 
-    debugPrint("respons e: $json");
+    debugPrint("respons e: $json.  ${response.body}");
 
     return ApiResponse<SignInResponse>.fromJson(
       json,
