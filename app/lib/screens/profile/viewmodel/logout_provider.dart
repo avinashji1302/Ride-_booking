@@ -1,27 +1,34 @@
+import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/profile/repository/profile_repository.dart';
 import 'package:flutter/material.dart';
 
-class LogoutProvider  extends ChangeNotifier{
+class LogoutProvider extends ChangeNotifier {
+  final ProfileRepository repository =ProfileRepository();
 
-final ProfileRepository repository;
-
-LogoutProvider({required this.repository});
+  LogoutProvider();
   //-----------------------------------
 
-  bool isLoading=false;
+  bool isLoading = false;
 
-
-  Future<void> logout() async{
-
+  Future<ApiResponse> logout() async {
     isLoading = true;
     notifyListeners();
 
-    final response = await repository.logout();
-     isLoading=true;
+    try {
+      final response = await repository.logout();
+      isLoading = true;
       AuthStorage().clear();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      isLoading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
 
-
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
   }
-
 }

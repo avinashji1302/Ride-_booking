@@ -13,7 +13,7 @@ class HttpClient {
           {
             "Content-Type": "application/json",
           },
-      body: jsonEncode(body),
+      body: body != null ? jsonEncode(body) : null, //
     );
   }
 }

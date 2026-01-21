@@ -1,30 +1,27 @@
-import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/device/location_permission.dart';
+import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
-import 'package:app/screens/home/model/estimate_response_model.dart/ride_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
 import 'package:app/screens/home/respository/home_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-enum HomeFlow {
-  searchDestination,
-  selectRide,
-  waitingDriver,
-  rideConfirmed,
-}
-
+enum HomeFlow { searchDestination, selectRide, waitingDriver, accepted }
 
 class HomeProvider extends ChangeNotifier {
   final HomeRepository homeRepository = HomeRepository();
   final LocationService _locationService = LocationService();
 
+  PolylinePoints polylinePoints = PolylinePoints(apiKey: MapConstants.mapkey);
+
   RideEstimateResultModel? _allEstemiateREsult;
   final List<VehicleFare> _allVehicleFare = [];
+  dynamic confiremRideDetails;
 
   String vehicleType = "";
 
@@ -52,26 +49,27 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void goToWaiting() {
-  _flow = HomeFlow.waitingDriver;
-  
-  notifyListeners();
-}
+    _flow = HomeFlow.waitingDriver;
 
-void goToRideConfirmed() {
-  _flow = HomeFlow.rideConfirmed;
-  notifyListeners();
-}
+    notifyListeners();
+  }
 
-
+  void goToRideConfirmed() {
+    _flow = HomeFlow.accepted;
+    notifyListeners();
+  }
 
   //----------------------------------Map created---------------------------------------------
 
-  GoogleMapController? _controller;
+  final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
 
-  Set<Marker> marker = {};
+  Set<Marker> get markers => _markers;
+  Set<Polyline> get polylines => _polylines;
+  GoogleMapController? _mapController;
 
   void onMapCreated(GoogleMapController mapController) {
-    _controller = mapController;
+    _mapController = mapController;
 
     print(
       "location lat and long : ${position!.latitude} ${position!.longitude}",
@@ -88,7 +86,7 @@ void goToRideConfirmed() {
   }
 
   void _moveCameraToUser() {
-    _controller?.animateCamera(
+    _mapController?.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(position!.latitude, position!.longitude),
@@ -100,23 +98,91 @@ void goToRideConfirmed() {
   }
 
   void _addUserMarker() {
-    marker = {
+    if (position == null) return;
+
+    _markers.clear();
+    _markers.add(
       Marker(
-        markerId: const MarkerId("user_location"),
+        markerId: const MarkerId('user'),
         position: LatLng(position!.latitude, position!.longitude),
-        infoWindow: const InfoWindow(title: "Your Location"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueAzure, // ✅ Blue color to stand out
-        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       ),
-    };
+    );
+    notifyListeners();
+  }
+  // ================= ROUTE DRAW =================
+
+  Future<void> onRideAccepted(dynamic ride) async {
+    debugPrint("🧠 Provider received rideAccepted event");
+    debugPrint("📍 Pickup: ${ride['pickupLocation']}");
+    debugPrint("📍 Drop: ${ride['dropLocation']}");
+    confiremRideDetails = ride;
+    await _drawRouteFromRide(ride);
+
+    _flow = HomeFlow.accepted;
+    debugPrint("🔄 Flow changed to ACCEPTED");
 
     notifyListeners();
   }
 
+  Future<void> _drawRouteFromRide(dynamic ride) async {
+    final pickupCoords = ride['pickupLocation']['coordinates'];
+    final dropCoords = ride['dropLocation']['coordinates'];
 
+    // ✅ CORRECT ORDER
+    final pickup = LatLng(pickupCoords[0], pickupCoords[1]);
+    final drop = LatLng(dropCoords[0], dropCoords[1]);
 
+    debugPrint("🛣 Drawing route");
+    debugPrint("➡ Pickup: $pickup");
+    debugPrint("➡ Drop: $drop");
 
+    final result = await polylinePoints.getRouteBetweenCoordinatesV2(
+      request: RoutesApiRequest(
+        origin: PointLatLng(pickup.latitude, pickup.longitude),
+        destination: PointLatLng(drop.latitude, drop.longitude),
+        travelMode: TravelMode.driving,
+      ),
+    );
+
+    if (result.routes.isEmpty) {
+      debugPrint("❌ Google returned no routes");
+      return;
+    }
+
+    final points = result.routes.first.polylinePoints!;
+    debugPrint("✅ Polyline points count: ${points.length}");
+
+    _polylines.clear();
+
+    _polylines.add(
+      Polyline(
+        polylineId: const PolylineId('ride_route'),
+        color: Colors.green,
+        width: 6,
+        points: points.map((p) => LatLng(p.latitude, p.longitude)).toList(),
+      ),
+    );
+
+    notifyListeners();
+  }
+
+  // void _fitRouteBounds(List<LatLng> points) {
+  //   final bounds = LatLngBounds(
+  //     southwest: LatLng(
+  //       points.map((e) => e.latitude).reduce((a, b) => a < b ? a : b),
+  //       points.map((e) => e.longitude).reduce((a, b) => a < b ? a : b),
+  //     ),
+  //     northeast: LatLng(
+  //       points.map((e) => e.latitude).reduce((a, b) => a > b ? a : b),
+  //       points.map((e) => e.longitude).reduce((a, b) => a > b ? a : b),
+  //     ),
+  //   );
+
+  //   _mapController?.animateCamera(
+  //     CameraUpdate.newLatLngBounds(bounds, 80),
+  //   );
+  // }
 
   //----------------------------------Estimate API Call---------------------------------------
 
@@ -186,7 +252,7 @@ void goToRideConfirmed() {
         RideCreatedRequestModel(
           pickupLocation: Location(coordinates: [26.9240, 75.8270]),
           dropLocation: Location(coordinates: [26.9250, 75.8260]),
-          vehicleType:  "mini" ,
+          vehicleType: "mini",
           paymentMethod: "cash",
         ),
         id,
@@ -210,7 +276,33 @@ void goToRideConfirmed() {
       );
     }
   }
-}
 
+  //----------------------------------------Cancel the ride--------------------------------------
+
+  Future<ApiResponse> cancelRide(String rideId, String reason) async {
+    loading = true;
+    notifyListeners();
+
+    try {
+      final response = await homeRepository.rideCancel(
+        rideId: rideId,
+        reason:reason,
+      );
+
+      loading = false;
+
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+}
 
 // Hawa Mahal (approx. 26.9240° N, 75.8270° E) and Jantar Mantar (approx. 26.9250° N, 75.8260° E)

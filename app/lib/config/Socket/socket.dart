@@ -1,7 +1,9 @@
-import 'dart:math' as console;
+
 
 import 'package:app/config/network/api_endpoints.dart';
-import 'package:flutter/foundation.dart';
+import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:flutter/material.dart';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
@@ -11,29 +13,28 @@ class SocketService {
 
   IO.Socket? socket;
 
-  // ================= CONNECT =================
-  void connect(String token , String id) {
+  late HomeProvider _homeProvider;
+
+  /// Inject provider ONCE
+  void attachHomeProvider(HomeProvider provider) {
+    _homeProvider = provider;
+    debugPrint("🧩 HomeProvider attached to SocketService");
+  }
+
+  void connect(String token, String id) {
     if (socket != null && socket!.connected) {
       debugPrint("⚠️ Socket already connected");
       return;
     }
 
-    debugPrint("🔑 Connecting socket with token");
+    debugPrint("🔑 Connecting socket...");
 
     socket = IO.io(
-      // 'http://192.168.2.143:5678',
-
       ApiEndpoints.baseUrl,
-      
       IO.OptionBuilder()
           .setTransports(['websocket'])
+          .setAuth({'token': token})
           .disableAutoConnect()
-          .setExtraHeaders({
-            'Authorization': 'Bearer $token', 
-          })
-          .setAuth({
-            'token': token, 
-          })
           .build(),
     );
 
@@ -41,51 +42,34 @@ class SocketService {
     socket!.connect();
   }
 
-  // ================= LISTENERS =================
   void _registerListeners(String id) {
-    // 🔍 LISTEN TO ALL EVENTS (DEBUG)
     socket!.onAny((event, data) {
-      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      debugPrint('📨 SOCKET EVENT');
-      debugPrint('🏷️ Event: $event');
-      debugPrint('📦 Data: $data');
-      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      debugPrint("━━━━━━━━━━━━━━━━━━━━");
+      debugPrint("📡 EVENT: $event");
+      debugPrint("📦 DATA: $data");
+      debugPrint("━━━━━━━━━━━━━━━━━━━━");
     });
-
-
 
     socket!.onConnect((_) {
-      debugPrint('🟢 SOCKET CONNECTED');
-
+      debugPrint("🟢 SOCKET CONNECTED");
       socket!.emit('user:connect', id);
-      debugPrint('🆔 Socket ID: ${socket!.id}');
-    });
-
-    socket!.onDisconnect((_) {
-      debugPrint('SOCKET DISCONNECTED');
-    });
-
-    socket!.onConnectError((err) {
-      debugPrint('CONNECT ERROR: $err');
-    });
-
-    socket!.onError((err) {
-      debugPrint('SOCKET ERROR: $err');
     });
 
     socket!.on('user:rideAccepted', (data) {
-      debugPrint('DRIVER ACCEPTED RIDE');
-      debugPrint('📦 DATA: $data');
+      debugPrint("🚗 DRIVER ACCEPTED RIDE");
+      debugPrint("📦 Ride Data: ${data['ride']}");
+
+      // ✅ SAFE — no context involved
+      _homeProvider.onRideAccepted(data['ride']);
     });
 
-    socket!.on('user:connect:ack', (data) => {
-  print('User connected successfully:$data')
-  // Now you can receive ride events
-});
+    socket!.onDisconnect((_) {
+      debugPrint("🔴 SOCKET DISCONNECTED");
+    });
   }
 
-  // ================= DISCONNECT =================
   void disconnect() {
+    debugPrint("🔌 Socket disconnected manually");
     socket?.disconnect();
     socket?.dispose();
     socket = null;

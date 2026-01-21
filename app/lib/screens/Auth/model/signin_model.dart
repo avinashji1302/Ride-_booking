@@ -68,8 +68,8 @@ class SignInResponse {
   final String registrationType;
   final bool notifications;
   final bool forceLogout;
-  final int wallet;
-  final double cancellationPenalty;
+  final String wallet;
+  final String cancellationPenalty;
   final List<dynamic> address;
   final String createdAt;
   final String updatedAt;
@@ -120,8 +120,8 @@ class SignInResponse {
       registrationType: json['registrationType'] ?? '',
       notifications: json['notifications'] ?? false,
       forceLogout: json['forceLogout'] ?? false,
-      wallet: json['wallet'] ?? 0,
-      cancellationPenalty: json['cancellationPenalty'] ?? 0.0,
+      wallet: json['wallet']?.toString() ?? '0',
+    cancellationPenalty: json['cancellationPenalty']?.toString() ?? '0',
       address: json['address'] ?? [],
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',

@@ -78,6 +78,7 @@ class RideSelectionSheet extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
+                      
                       onPressed: () async {
                         final result = await homeProvider.createRide(id);
                         if (result.success) {
@@ -89,6 +90,8 @@ class RideSelectionSheet extends StatelessWidget {
                       child: const Text("Book Ride"),
                     ),
                   ),
+
+                  SizedBox(height: 10,)
                 ],
               ),
             );

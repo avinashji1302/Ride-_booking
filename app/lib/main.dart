@@ -6,6 +6,7 @@ import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
 import 'package:app/screens/home/view/home_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
          ChangeNotifierProvider(create: (_) => HomeProvider()),
+         ChangeNotifierProvider(create: (_) => LogoutProvider()), 
         // ✅ Don't initialize ResetPasswordProvider here - it needs parameters
         // ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
       ],

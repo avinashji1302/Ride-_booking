@@ -9,23 +9,25 @@ import 'package:flutter/material.dart';
 class SignInProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
   final AuthStorage _storage = AuthStorage();
-  final TextEditingController emailController = TextEditingController(text: "avinash@gmail.com");
-  final TextEditingController passController = TextEditingController(text: "avinash");
- bool loading = false;
- String? error;
+  final TextEditingController emailController = TextEditingController(
+    text: "avinash@gmail.com",
+  );
+  final TextEditingController passController = TextEditingController(
+    text: "avinash",
+  );
+  bool loading = false;
+  String? error;
 
-
-  Future<ApiResponse> signIn(  bool isPhone) async {
-   
+  Future<ApiResponse> signIn(BuildContext context, bool isPhone) async {
     loading = true;
     error = null;
     notifyListeners();
 
     try {
-       final deviceId = await DeviceDetails.getDeviceId();
+      final deviceId = await DeviceDetails.getDeviceId();
       final response = await _authRepository.signIn(
         LoginRequest(
-          type: isPhone? "mobile":"email",
+          type: isPhone ? "mobile" : "email",
           email: emailController.text,
           mobile: emailController.text,
           countryCode: "+91",
@@ -39,26 +41,21 @@ class SignInProvider extends ChangeNotifier {
       loading = false;
       notifyListeners();
 
-        if (response.success && response.data != null) {
+      if (response.success && response.data != null) {
         await _storage.saveSession(
           accessToken: response.data!.token,
           refreshToken: response.data!.refreshToken,
         );
 
-
-       
         emailController.clear();
         passController.clear();
 
         debugPrint("data : ${response.data!.id}");
-final token = await AuthStorage().getAccessToken();
-final id= response.data!.id;
-         SocketService().connect(token! , id);
+        final token = await AuthStorage().getAccessToken();
+        final id = response.data!.id;
+        SocketService().connect( token!, id);
 
-        return ApiResponse(
-          success: true,
-          message: response.message,
-        );
+        return ApiResponse(success: true, message: response.message);
       }
 
       debugPrint("errror : ${response.message} ${response.success}");
@@ -66,26 +63,21 @@ final id= response.data!.id;
       return ApiResponse(
         success: false,
         message: response.message,
-        data: response.data
+        data: response.data,
       );
     } catch (e) {
       loading = false;
       error = e.toString();
       notifyListeners();
-     debugPrint("somethign : $e");
-      return ApiResponse(
-        success: false,
-        message: "Something went wrong $e",
-      );
+      debugPrint("somethign : $e");
+      return ApiResponse(success: false, message: "Something went wrong $e");
     }
   }
 
-
-    @override
+  @override
   void dispose() {
     emailController.dispose();
     passController.dispose();
     super.dispose();
   }
 }
- 

@@ -65,4 +65,47 @@ class HomeRepository {
       (data) => RideCreatedResposeModel.fromJson(data),
     );
   }
+
+
+  //----------------------------------Cancel the ride--------------------------------
+
+  // curl -X POST 'http://localhost:5678/v1/user/ride/cancel' \
+  // --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
+  // --header 'Content-Type: application/json' \
+  // --data '{
+  //   "rideId": "696de54b3eac38853d826622",
+  //   "reason": "Changed my mind"
+  // }'
+ 
+
+Future<ApiResponse<void>> rideCancel({
+  required String rideId,
+  required String reason,
+}) async {
+  final token = await AuthStorage().getAccessToken();
+
+  final response = await HttpClient.post(
+    ApiEndpoints.cancelRide,
+    headers: {
+      "Accept": "application/json",
+      "Content-type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+    body: {
+      "rideId": rideId,
+      "reason": reason,
+    },
+  );
+
+  debugPrint("Raw data cancel ride: ${response.body}");
+
+  final json = jsonDecode(response.body);
+
+  return ApiResponse<void>.fromJson(
+    json,
+    (_) => null,
+  );
+}
+
+ 
 }

@@ -103,7 +103,7 @@ class SignInPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-                            final result = await controller.signIn(isPhone!);
+                            final result = await controller.signIn(context , isPhone!);
 
                             if (result.success) {
                               AppSnackBar.show(

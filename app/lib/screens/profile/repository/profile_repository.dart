@@ -10,22 +10,24 @@ import 'package:flutter/cupertino.dart';
 class ProfileRepository {
   //=------------------------logout------------------------
 
-  Future<ApiResponse<void>> logout() async {
-    final token = await AuthStorage().getAccessToken();
+Future<ApiResponse<void>> logout() async {
+  final token = await AuthStorage().getAccessToken();
 
-    final response = await HttpClient.post(
-      ApiEndpoints.logout,
-      headers: {
-        "Accept": "application/json",
-        "Content-type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
+  debugPrint("token : $token");
 
-    debugPrint("raw response : ${response.body}");
+  final response = await HttpClient.post(
+    ApiEndpoints.logout,
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  
+  );
 
-    final json = jsonDecode(response.body);
+  debugPrint("raw response : ${response.body}");
 
-    return ApiResponse<void>.fromJson(json, (_) {});
-  }
+  final json = jsonDecode(response.body);
+  return ApiResponse<void>.fromJson(json, (_) {});
+}
 }
