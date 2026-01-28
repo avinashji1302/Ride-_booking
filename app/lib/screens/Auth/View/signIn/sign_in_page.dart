@@ -54,7 +54,7 @@ class SignInPage extends StatelessWidget {
                               prefixIcon: const Icon(Icons.email),
                             )
                           : InputFieldWidget(
-                              controller: controller.emailController,
+                              controller: controller.phoneController,
                               hint: "Phone",
                               validator: Validators.validatePhone,
                               keyboardType: TextInputType.phone,
@@ -104,6 +104,8 @@ class SignInPage extends StatelessWidget {
                           ),
                           onPressed: () async {
                             final result = await controller.signIn(context , isPhone!);
+
+                            debugPrint("result : ${result.data}");
 
                             if (result.success) {
                               AppSnackBar.show(

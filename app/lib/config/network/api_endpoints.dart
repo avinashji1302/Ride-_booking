@@ -15,4 +15,11 @@ class ApiEndpoints {
   static const rideCreate = "$baseUrl/v1/user/ride/create";
    static const cancelRide = "$baseUrl/v1/user/ride/cancel";
   static const logout = "$baseUrl/v1/user/logout";
+    static const profile = "$baseUrl/v1/user/getProfile";
+    static const coupon = "$baseUrl/v1/user/ride/apply-promo";
+    static const schedule = "$baseUrl/v1/user/ride/schedule";
+    static const upiPayment = "$baseUrl/v1/user/wallet/payment-details?paymentMethod=upi";
+      static const walletRechare = "$baseUrl/v1/user/wallet/recharge";
+
+// http://localhost:5678/v1/user/wallet/recharge
 }

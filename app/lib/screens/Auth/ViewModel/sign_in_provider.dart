@@ -15,8 +15,16 @@ class SignInProvider extends ChangeNotifier {
   final TextEditingController passController = TextEditingController(
     text: "avinash",
   );
+
+   final TextEditingController phoneController = TextEditingController(
+    text: "avinash",
+  );
   bool loading = false;
   String? error;
+
+  SignInResponse? _userDetails;
+
+    SignInResponse? get  userDetails=>_userDetails;
 
   Future<ApiResponse> signIn(BuildContext context, bool isPhone) async {
     loading = true;
@@ -29,7 +37,7 @@ class SignInProvider extends ChangeNotifier {
         LoginRequest(
           type: isPhone ? "mobile" : "email",
           email: emailController.text,
-          mobile: emailController.text,
+          mobile: phoneController.text,
           countryCode: "+91",
           password: passController.text,
           deviceId: deviceId,
@@ -41,19 +49,28 @@ class SignInProvider extends ChangeNotifier {
       loading = false;
       notifyListeners();
 
+      debugPrint("data : $isPhone ${phoneController.text} ${response.message}}");
+
       if (response.success && response.data != null) {
         await _storage.saveSession(
           accessToken: response.data!.token,
           refreshToken: response.data!.refreshToken,
         );
+        await AuthStorage().saveUserId(response.data!.id);
+        final userId = await AuthStorage().getUserId();
+      //  final id = response.data!.id;
 
+       
+       _userDetails = response.data;
         emailController.clear();
         passController.clear();
 
+      
+
         debugPrint("data : ${response.data!.id}");
         final token = await AuthStorage().getAccessToken();
-        final id = response.data!.id;
-        SocketService().connect( token!, id);
+        
+        SocketService().connect( token!, userId!);
 
         return ApiResponse(success: true, message: response.message);
       }

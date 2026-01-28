@@ -1,9 +1,12 @@
 import 'package:app/config/device/location_permission.dart';
 import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
+import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
+import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
+    hide Location;
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
 import 'package:app/screens/home/respository/home_repository.dart';
 import 'package:flutter/material.dart' hide Route;
@@ -21,9 +24,10 @@ class HomeProvider extends ChangeNotifier {
 
   RideEstimateResultModel? _allEstemiateREsult;
   final List<VehicleFare> _allVehicleFare = [];
-  dynamic confiremRideDetails;
+  RideAcceptedSocketModel? confiremRideDetails;
 
   String vehicleType = "";
+   String selectedPayment = "Cash";
 
   RideEstimateResultModel? get allEstimatedResult => _allEstemiateREsult;
   List<VehicleFare> get allVehicleFares => _allVehicleFare;
@@ -59,6 +63,11 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  void updatePaymeentmode(String value){
+    selectedPayment=value;
+    notifyListeners();
+  }
   //----------------------------------Map created---------------------------------------------
 
   final Set<Marker> _markers = {};
@@ -112,12 +121,13 @@ class HomeProvider extends ChangeNotifier {
   }
   // ================= ROUTE DRAW =================
 
-  Future<void> onRideAccepted(dynamic ride) async {
+  Future<void> onRideAccepted(RideAcceptedSocketModel data) async {
     debugPrint("🧠 Provider received rideAccepted event");
-    debugPrint("📍 Pickup: ${ride['pickupLocation']}");
-    debugPrint("📍 Drop: ${ride['dropLocation']}");
-    confiremRideDetails = ride;
-    await _drawRouteFromRide(ride);
+    debugPrint("📍 Pickup: ${data.ride.pickupLocation}");
+    debugPrint("📍 Drop: ${data.ride.dropLocation}");
+    confiremRideDetails = data;
+    debugPrint("Data is : $confiremRideDetails");
+    await _drawRouteFromRide(confiremRideDetails!);
 
     _flow = HomeFlow.accepted;
     debugPrint("🔄 Flow changed to ACCEPTED");
@@ -125,9 +135,9 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _drawRouteFromRide(dynamic ride) async {
-    final pickupCoords = ride['pickupLocation']['coordinates'];
-    final dropCoords = ride['dropLocation']['coordinates'];
+  Future<void> _drawRouteFromRide(RideAcceptedSocketModel data) async {
+    final pickupCoords = data.ride.pickupLocation;
+    final dropCoords = data.ride.dropLocation;
 
     // ✅ CORRECT ORDER
     final pickup = LatLng(pickupCoords[0], pickupCoords[1]);
@@ -242,7 +252,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<ApiResponse> createRide(String id) async {
     debugPrint(
-      "ride id : $id ${position!.latitude}. ....${position!.longitude} $vehicleType",
+      "ride id : $id ${position!.latitude}. ....${position!.longitude} $vehicleType. ${selectedPayment.toString().toLowerCase()}",
     );
     loading = true;
     notifyListeners();
@@ -252,8 +262,8 @@ class HomeProvider extends ChangeNotifier {
         RideCreatedRequestModel(
           pickupLocation: Location(coordinates: [26.9240, 75.8270]),
           dropLocation: Location(coordinates: [26.9250, 75.8260]),
-          vehicleType: "mini",
-          paymentMethod: "cash",
+          vehicleType:vehicleType,
+          paymentMethod: selectedPayment.toString().toLowerCase(),
         ),
         id,
       );
@@ -286,10 +296,11 @@ class HomeProvider extends ChangeNotifier {
     try {
       final response = await homeRepository.rideCancel(
         rideId: rideId,
-        reason:reason,
+        reason: reason,
       );
 
       loading = false;
+      notifyListeners();
 
       return ApiResponse(success: response.success, message: response.message);
     } catch (e) {
@@ -303,6 +314,100 @@ class HomeProvider extends ChangeNotifier {
       );
     }
   }
+
+  //----------------------------------------Apply Coupon -------------------------------------------
+
+  bool isCouponApplied = false;
+  int? discountPercent;
+  String? discountType;
+
+
+  CouponModel? coupnResponse;
+
+  Future<ApiResponse> applyCoupon(
+    String couponCode,
+    String userId,
+    String rideId,
+  ) async {
+    loading = true;
+    notifyListeners();
+
+    try {
+      final response = await homeRepository.applyCoupon(
+        couponCode,
+        userId,
+        rideId,
+      );
+      if (response.data != null) {
+        discountPercent = response.data!.discount!.discountValue;
+        discountType = response.data!.discount!.discountType;
+       
+        couponCode=response.data!.discount!.code!;
+      }
+
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+
+  double getDiscountedFare(double originalFare) {
+    if (!isCouponApplied || discountPercent == null) {
+      return originalFare;
+    }
+
+
+    final discountAmount = originalFare * (discountPercent! / 100);
+
+    return originalFare - discountAmount;
+  }
+
+
+
+  //----------------------------------------Scheduled Ride -------------------------------------------
+
+
+//  String? rideScheduledTime;
+  Future<ApiResponse> scheduledRide(
+   String? promoCode,
+   vehicleType,
+   String paymentMethod,
+   String scheduledTime
+  ) async {
+    loading = true;
+    notifyListeners();
+
+    try {
+      final response = await homeRepository.scheduledRide(promoCode!, vehicleType, paymentMethod, scheduledTime);
+      if (response.data != null) {
+      
+      }
+
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+
+  
 }
 
-// Hawa Mahal (approx. 26.9240° N, 75.8270° E) and Jantar Mantar (approx. 26.9250° N, 75.8260° E)
+

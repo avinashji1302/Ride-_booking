@@ -1,7 +1,9 @@
+import 'package:app/config/helper/common/schedule_time.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 class SctollableCard extends StatelessWidget {
   const SctollableCard({super.key});
 
@@ -21,18 +23,12 @@ class SctollableCard extends StatelessWidget {
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
           ),
           child: Column(
             children: [
               const SizedBox(height: 12),
 
-             
               Container(
                 width: 50,
                 height: 5,
@@ -44,13 +40,26 @@ class SctollableCard extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-          
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Enter destination",
                     prefixIcon: const Icon(Icons.search, color: Colors.red),
+                    suffixIcon: GestureDetector(
+                      onTap: () async {
+                        final scheduledFor = await pickDateTime(context);
+
+                        if (scheduledFor == null) {
+                        
+                          return;
+                        }
+                    
+                       
+                        print(scheduledFor);
+                      },
+                      child: Icon(Icons.alarm, size: 45),
+                    ),
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -65,7 +74,6 @@ class SctollableCard extends StatelessWidget {
               const SizedBox(height: 10),
               Divider(height: 1),
 
-             
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
@@ -124,10 +132,7 @@ class SctollableCard extends StatelessWidget {
                     color: Colors.red.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                  ),
+                  child: const Icon(Icons.location_on, color: Colors.red),
                 ),
 
                 const SizedBox(width: 12),
@@ -156,10 +161,7 @@ class SctollableCard extends StatelessWidget {
                   ),
                 ),
 
-                const Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey,
-                ),
+                const Icon(Icons.chevron_right, color: Colors.grey),
               ],
             ),
           ),

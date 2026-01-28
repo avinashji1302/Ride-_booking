@@ -1,9 +1,10 @@
+import 'package:app/screens/home/model/ride_accepted_socket_model.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ConfirmedRide extends StatelessWidget {
-  final dynamic confiremRideDetails;
+  final RideAcceptedSocketModel confiremRideDetails;
   final String rideId;
   const ConfirmedRide({
     super.key,
@@ -47,33 +48,38 @@ class ConfirmedRide extends StatelessWidget {
 
                   Row(
                     children: [
-                      Text(
-                        "Rj323242",
+                        Text(confiremRideDetails.vehicle.number,
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          showCancelRideDialog(context, controller , rideId);
-                        },
-                        child: const Text(
-                          "Cancel ride",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                      Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              showCancelRideDialog(context, controller , rideId);
+                            },
+                            child: const Text(
+                              "Cancel ride",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
-                        ),
+
+                          Text("Start with OTP : ${confiremRideDetails.otp}")
+                        ],
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text("Splender"),
+                  Text(confiremRideDetails.vehicle.type),
                   const SizedBox(height: 10),
-                  Text("${"Avinash"} ⭐ ${4.3}"),
+                  Text("${confiremRideDetails.driver.fullName} ⭐ ${4.3}"),
 
                   const SizedBox(height: 20),
                   Spacer(),

@@ -6,6 +6,7 @@ import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
 import 'package:app/screens/home/view/home_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:app/screens/old_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
          ChangeNotifierProvider(create: (_) => HomeProvider()),
-         ChangeNotifierProvider(create: (_) => LogoutProvider()), 
+         ChangeNotifierProvider(create: (_) => ProfileProvider()), 
+                  ChangeNotifierProvider(create: (_) => OlaMoneyProvider()), 
+
         // ✅ Don't initialize ResetPasswordProvider here - it needs parameters
         // ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
       ],
@@ -50,7 +53,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// ✅ Widget to check authentication status
+
 class AuthCheck extends StatefulWidget {
   const AuthCheck({super.key});
 
@@ -92,7 +95,7 @@ class _AuthCheckState extends State<AuthCheck> {
 
   @override
   Widget build(BuildContext context) {
-    // Show loading indicator while checking auth
+  
     if (_isLoading) {
       return const Scaffold(
         body: Center(
@@ -101,9 +104,9 @@ class _AuthCheckState extends State<AuthCheck> {
       );
     }
 
-    // Navigate to appropriate screen based on login status
+   
     return _isLoggedIn 
-        ? const HomePage()  // ✅ User is logged in
-        : const WelcomeScreen(); // ✅ User is not logged in
+        ? const HomePage()  
+        : const WelcomeScreen(); 
   }
 }

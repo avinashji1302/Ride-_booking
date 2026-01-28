@@ -1,3 +1,4 @@
+import 'package:app/screens/Auth/model/signin_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthStorage {
@@ -24,5 +25,13 @@ class AuthStorage {
 
   Future<void> clear() async {
     await _storage.deleteAll();
+  }
+
+  Future<void> saveUserId(String  userId) async{
+     await _storage.write(key: "userId", value: userId);
+  }
+
+    Future<String?> getUserId() async{
+   return  await _storage.read(key: "userId");
   }
 }

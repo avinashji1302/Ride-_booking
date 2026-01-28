@@ -1,11 +1,14 @@
 import 'package:app/config/Socket/socket.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
+import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/home/widgets/confirmed_ride.dart';
 import 'package:app/screens/home/widgets/ride_selection.dart';
 import 'package:app/screens/home/widgets/sctollable_card.dart';
 import 'package:app/screens/home/view/book_ride_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/home/widgets/waiting_driver.dart';
+import 'package:app/screens/old_money/view/ola_money.dart';
+import 'package:app/screens/profile/view/user_profile.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -36,80 +39,175 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final logoutProvider = context.watch<LogoutProvider>();
+    final pofileProvider = context.watch<ProfileProvider>();
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Column(
-                  children: const [
-                    CircleAvatar(
-                      radius: 40,
-                      child: Icon(Icons.person, size: 32),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Avinash Gupta",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+        child: Consumer<SignInProvider>(
+          builder:
+              (
+                BuildContext context,
+                SignInProvider signInProvider,
+                Widget? child,
+              ) {
+                return SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Column(
+                          children: [
+                            const CircleAvatar(
+                              radius: 40,
+                              child: Icon(Icons.person, size: 32),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              signInProvider.userDetails?.fullName ??
+                                  "user name not found",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            Text(
+                              signInProvider.userDetails?.email ??
+                                  "email not found",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
 
-              const Divider(),
+                      const Divider(),
 
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    ListTile(leading: Icon(Icons.home), title: Text("Home")),
-                    ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text("Profile"),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.add_location),
-                      title: Text("Location"),
-                    ),
-                  ],
-                ),
-              ),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.home),
+                              title: Text("Home"),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                final response = await pofileProvider
+                                    .getProfile();
 
-              const Divider(),
+                                if (response.success) {
+                                  debugPrint(
+                                    "Successfully deleted : ${response.message}",
+                                  );
 
-              ListTile(
-                leading: Icon(Icons.logout, color: Colors.red),
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onTap: () async {
-                  final response = await logoutProvider.logout();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UserProfile(),
+                                    ),
+                                  );
+                                } else {
+                                  if (response.success) {
+                                    debugPrint(
+                                      "Successfully deleted : ${response.message}",
+                                    );
+                                  }
+                                }
 
-                  if (response.success) {
-                    debugPrint("Successfully deleted : ${response.message}");
+                                
+                              },
+                              child: ListTile(
+                                leading: Icon(Icons.person),
+                                title: Text("Profile"),
+                              ),
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.add_location),
+                              title: Text("History"),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                final response = await pofileProvider
+                                    .getProfile();
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SignInPage()),
-                    );
-                  }else{
-                     if (response.success) {
-                    debugPrint("Successfully deleted : ${response.message}");
-                  }
-                  }
-  }),
+                                if (response.success) {
+                                  debugPrint(
+                                    "Successfully deleted : ${response.message}",
+                                  );
 
-              const SizedBox(height: 12),
-            ],
-          ),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => OlaMoney
+                                      (),
+                                    ),
+                                  );
+                                } else {
+                                  if (response.success) {
+                                    debugPrint(
+                                      "Successfully deleted : ${response.message}",
+                                    );
+                                  }
+                                }
+
+                                
+                              },
+                              child: ListTile(
+                                leading: Icon(Icons.home),
+                                title: Text("Ola Money"),
+                              ),
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.home),
+                              title: Text("Payments"),
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.home),
+                              title: Text("About"),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const Divider(),
+
+                      ListTile(
+                        leading: Icon(Icons.logout, color: Colors.red),
+                        title: const Text(
+                          "Logout",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onTap: () async {
+                          final response = await pofileProvider.logout();
+
+                          if (response.success) {
+                            debugPrint(
+                              "Successfully deleted : ${response.message}",
+                            );
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SignInPage()),
+                            );
+                          } else {
+                            if (response.success) {
+                              debugPrint(
+                                "Successfully deleted : ${response.message}",
+                              );
+                            }
+                          }
+                        },
+                      ),
+
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                );
+              },
         ),
       ),
 
@@ -164,7 +262,7 @@ class _HomePageState extends State<HomePage> {
 
               if (controller.flow == HomeFlow.accepted && rideId != null)
                 ConfirmedRide(
-                  confiremRideDetails: controller.confiremRideDetails,
+                  confiremRideDetails: controller.confiremRideDetails!,
                   rideId: rideId,
                 ),
             ],
