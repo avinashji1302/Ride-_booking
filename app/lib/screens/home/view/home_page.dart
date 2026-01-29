@@ -1,8 +1,11 @@
 import 'package:app/config/Socket/socket.dart';
+import 'package:app/config/helper/common/draggble_sheet.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/home/widgets/confirmed_ride.dart';
+import 'package:app/screens/home/widgets/reached_destination.dart';
 import 'package:app/screens/home/widgets/ride_selection.dart';
+import 'package:app/screens/home/widgets/ride_started.dart';
 import 'package:app/screens/home/widgets/sctollable_card.dart';
 import 'package:app/screens/home/view/book_ride_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
@@ -117,8 +120,6 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   }
                                 }
-
-                                
                               },
                               child: ListTile(
                                 leading: Icon(Icons.person),
@@ -142,8 +143,7 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => OlaMoney
-                                      (),
+                                      builder: (_) => OlaMoney(),
                                     ),
                                   );
                                 } else {
@@ -153,8 +153,6 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   }
                                 }
-
-                                
                               },
                               child: ListTile(
                                 leading: Icon(Icons.home),
@@ -260,11 +258,17 @@ class _HomePageState extends State<HomePage> {
               if (controller.flow == HomeFlow.waitingDriver)
                 WaitingForDriverSheet(),
 
-              if (controller.flow == HomeFlow.accepted && rideId != null)
+              if ((controller.flow == HomeFlow.accepted && rideId != null) ||
+                  controller.flow == HomeFlow.driverArrived && rideId != null)
                 ConfirmedRide(
                   confiremRideDetails: controller.confiremRideDetails!,
                   rideId: rideId,
                 ),
+
+              if (controller.flow == HomeFlow.rideStarted) RideStartedSheet(),
+
+              if (controller.flow == HomeFlow.reachedDestination)
+                ReachedDestination(),
             ],
           );
         },

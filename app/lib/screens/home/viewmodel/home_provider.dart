@@ -14,7 +14,15 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-enum HomeFlow { searchDestination, selectRide, waitingDriver, accepted }
+enum HomeFlow {
+  searchDestination,
+  selectRide,
+  waitingDriver,
+  accepted,
+  driverArrived,
+  rideStarted,
+  reachedDestination,
+}
 
 class HomeProvider extends ChangeNotifier {
   final HomeRepository homeRepository = HomeRepository();
@@ -25,9 +33,10 @@ class HomeProvider extends ChangeNotifier {
   RideEstimateResultModel? _allEstemiateREsult;
   final List<VehicleFare> _allVehicleFare = [];
   RideAcceptedSocketModel? confiremRideDetails;
+  bool driverArrivedPopupShown = false;
 
   String vehicleType = "";
-   String selectedPayment = "Cash";
+  String selectedPayment = "Cash";
 
   RideEstimateResultModel? get allEstimatedResult => _allEstemiateREsult;
   List<VehicleFare> get allVehicleFares => _allVehicleFare;
@@ -63,9 +72,24 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setRideStatus() {
+    debugPrint("driver arrived:");
+    _flow = HomeFlow.driverArrived;
+    notifyListeners();
+  }
 
-  void updatePaymeentmode(String value){
-    selectedPayment=value;
+  void rideStarted() {
+    _flow = HomeFlow.rideStarted;
+    notifyListeners();
+  }
+
+  void reachedDestination() {
+    _flow = HomeFlow.reachedDestination;
+    notifyListeners();
+  }
+
+  void updatePaymeentmode(String value) {
+    selectedPayment = value;
     notifyListeners();
   }
   //----------------------------------Map created---------------------------------------------
@@ -262,7 +286,7 @@ class HomeProvider extends ChangeNotifier {
         RideCreatedRequestModel(
           pickupLocation: Location(coordinates: [26.9240, 75.8270]),
           dropLocation: Location(coordinates: [26.9250, 75.8260]),
-          vehicleType:vehicleType,
+          vehicleType: vehicleType,
           paymentMethod: selectedPayment.toString().toLowerCase(),
         ),
         id,
@@ -321,7 +345,6 @@ class HomeProvider extends ChangeNotifier {
   int? discountPercent;
   String? discountType;
 
-
   CouponModel? coupnResponse;
 
   Future<ApiResponse> applyCoupon(
@@ -341,8 +364,8 @@ class HomeProvider extends ChangeNotifier {
       if (response.data != null) {
         discountPercent = response.data!.discount!.discountValue;
         discountType = response.data!.discount!.discountType;
-       
-        couponCode=response.data!.discount!.code!;
+
+        couponCode = response.data!.discount!.code!;
       }
 
       loading = false;
@@ -365,32 +388,30 @@ class HomeProvider extends ChangeNotifier {
       return originalFare;
     }
 
-
     final discountAmount = originalFare * (discountPercent! / 100);
 
     return originalFare - discountAmount;
   }
 
-
-
   //----------------------------------------Scheduled Ride -------------------------------------------
 
-
-//  String? rideScheduledTime;
   Future<ApiResponse> scheduledRide(
-   String? promoCode,
-   vehicleType,
-   String paymentMethod,
-   String scheduledTime
+    String? promoCode,
+    vehicleType,
+    String paymentMethod,
+    String scheduledTime,
   ) async {
     loading = true;
     notifyListeners();
 
     try {
-      final response = await homeRepository.scheduledRide(promoCode!, vehicleType, paymentMethod, scheduledTime);
-      if (response.data != null) {
-      
-      }
+      final response = await homeRepository.scheduledRide(
+        promoCode!,
+        vehicleType,
+        paymentMethod,
+        scheduledTime,
+      );
+      if (response.data != null) {}
 
       loading = false;
       notifyListeners();
@@ -407,7 +428,55 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  
+  //----------------------------------------Get Due Payment  -------------------------------------------
+
+  Future<ApiResponse> getDuePayment(String rideId) async {
+    loading = true;
+    notifyListeners();
+
+    debugPrint("ride id : $rideId");
+    try {
+      final response = await homeRepository.getDuePayemnt(rideId);
+      if (response.data != null) {}
+
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+
+  //---------------------------------------- Payment Done  -------------------------------------------
+
+  Future<ApiResponse> payemntDone(String rideId) async {
+    loading = true;
+    notifyListeners();
+
+    debugPrint("ride id : $rideId");
+    try {
+      final response = await homeRepository.paymentDone(rideId);
+    
+
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
 }
-
-

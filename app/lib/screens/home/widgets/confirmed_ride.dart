@@ -16,6 +16,16 @@ class ConfirmedRide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (BuildContext context, HomeProvider controller, Widget? child) {
+        
+    if (controller.flow == HomeFlow.driverArrived &&
+        !controller.driverArrivedPopupShown) {
+
+      controller.driverArrivedPopupShown = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDriverArrivedSheet(context);
+      });
+    }
         return DraggableScrollableSheet(
           initialChildSize: 0.55,
           minChildSize: 0.55,
@@ -30,17 +40,29 @@ class ConfirmedRide extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.check_circle, color: Colors.green),
-                      SizedBox(width: 8),
-                      Text(
-                        "Your ride is confirmed",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
+                  controller.flow == HomeFlow.driverArrived
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.check_circle, color: Colors.green),
+                            SizedBox(width: 8),
+                            Text(
+                              "Driver is arrived",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.check_circle, color: Colors.green),
+                            SizedBox(width: 8),
+                            Text(
+                              "Your ride is confirmed",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
 
                   Divider(),
 
@@ -48,7 +70,8 @@ class ConfirmedRide extends StatelessWidget {
 
                   Row(
                     children: [
-                        Text(confiremRideDetails.vehicle.number,
+                      Text(
+                        confiremRideDetails.vehicle.number,
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -59,7 +82,7 @@ class ConfirmedRide extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              showCancelRideDialog(context, controller , rideId);
+                              showCancelRideDialog(context, controller, rideId);
                             },
                             child: const Text(
                               "Cancel ride",
@@ -71,7 +94,7 @@ class ConfirmedRide extends StatelessWidget {
                             ),
                           ),
 
-                          Text("Start with OTP : ${confiremRideDetails.otp}")
+                          Text("Start with OTP : ${confiremRideDetails.otp}"),
                         ],
                       ),
                     ],
@@ -104,9 +127,6 @@ class ConfirmedRide extends StatelessWidget {
   }
 }
 
-
-
-
 Widget _reasonTile({
   required String text,
   required bool selected,
@@ -128,7 +148,11 @@ Widget _reasonTile({
   );
 }
 
-void showCancelRideDialog(BuildContext context, HomeProvider controller , String rideId) {
+void showCancelRideDialog(
+  BuildContext context,
+  HomeProvider controller,
+  String rideId,
+) {
   String? selectedReason;
 
   showDialog(
@@ -213,6 +237,51 @@ void showCancelRideDialog(BuildContext context, HomeProvider controller , String
             ],
           );
         },
+      );
+    },
+  );
+}
+
+
+void showDriverArrivedSheet(BuildContext context) {
+  showDialog(
+    context: context,
+   
+    builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+
+            const Text(
+              "Driver Arrived",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const Text(
+              "Your driver has arrived at the pickup location.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14),
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ),
+          ],
+        ),
       );
     },
   );

@@ -7,6 +7,7 @@ import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
+import 'package:app/screens/home/model/get_due_payment_model.dart';
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
 import 'package:app/screens/home/model/ride_create_model/ride_response_model.dart';
 import 'package:app/screens/home/model/ride_scheduled_model.dart';
@@ -153,6 +154,63 @@ class HomeRepository {
       json,
       (data) => RideScheduledModel.fromJson(data),
     );
+  }
+
+
+
+  //---------------------------get due payemnt-------------------
+
+  Future<ApiResponse<GetDuePaymentModel>> getDuePayemnt( String rideId
+  ) async {
+    final token = await AuthStorage().getAccessToken();
+
+   
+    final response = await HttpClient.get(
+      "${ApiEndpoints.duePayment}?rideId=$rideId",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      
+    );
+
+    debugPrint("Raw apply coupon response : ${response.body}");
+
+    final json = jsonDecode(response.body);
+
+    
+
+    return ApiResponse<GetDuePaymentModel>.fromJson(
+      json,
+      (data) => GetDuePaymentModel.fromJson(data),
+    );
+  }
+
+   //--------------------------- payemnt Done -------------------
+
+  Future<ApiResponse<void>> paymentDone( String rideId
+  ) async {
+    final token = await AuthStorage().getAccessToken();
+
+   
+    final response = await HttpClient.post(
+      "${ApiEndpoints.duePayment}?rideId=$rideId",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    
+      body: {
+        "rideId": rideId
+      }
+    );
+
+    debugPrint("Raw apply coupon response : ${response.body}");
+
+    final json = jsonDecode(response.body);
+    return ApiResponse<void>.fromJson(json, (_) => null);
   }
 }
 

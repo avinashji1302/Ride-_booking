@@ -83,11 +83,31 @@ class SocketService {
 
     socket!.on("user:driverArrived", (data) {
       debugPrint("Driver is arrived: $data");
+
+      if (_homeProvider.flow != HomeFlow.driverArrived) {
+        _homeProvider.setRideStatus();
+      }
     });
 
     socket!.on("user:rideStarted", (data) {
       debugPrint("ride started: $data");
+
+      _homeProvider.rideStarted() ;
     });
+
+
+
+//   // REACHED DESTINATION
+  socket!.on("user:reachedDestination", (data) {
+    debugPrint("🏁 reached desination : $data");
+    _homeProvider.reachedDestination();
+  });
+    //   // RIDE COMPLETED
+  socket!.on("user:rideCompleted", (data)  {
+    // debugPrint("🏁 Ride Completed: $data");
+    // _homeProvider.reachedDestination();
+   
+  });
 
     socket!.on("user:rideCancelled", (data) {
       debugPrint("❌ Ride Cancelled by user........: $data");
