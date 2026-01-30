@@ -69,7 +69,8 @@ class RideSelectionSheet extends StatelessWidget {
                           final data = homeProvider.allVehicleFares[index];
 
                           debugPrint("Estimated data : $data");
-                          final originalFare = data.estimatedFare.toDouble();
+                         final originalFare = (data.estimatedFare).toDouble();
+
                           final discountedFare = homeProvider.getDiscountedFare(
                             originalFare,
                           );
@@ -319,6 +320,8 @@ class RideSelectionSheet extends StatelessWidget {
                                 final result = await homeProvider.createRide(
                                   id,
                                 );
+
+                                debugPrint("message : ${result.message} ${result.data}");
                                 if (result.success) {
                                   homeProvider.goToWaiting();
                                 } else {
@@ -364,7 +367,6 @@ class RideSelectionSheet extends StatelessWidget {
                           return;
                         }
 
-                        //  final result = homeProvider.scheduledRide("promoCode", vehicleType, "cash", scheduledTime)
 
                         print(scheduledTime);
                       },

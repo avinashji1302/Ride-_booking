@@ -195,7 +195,7 @@ class HomeRepository {
 
    
     final response = await HttpClient.post(
-      "${ApiEndpoints.duePayment}?rideId=$rideId",
+      ApiEndpoints.paymentDone,
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -207,7 +207,7 @@ class HomeRepository {
       }
     );
 
-    debugPrint("Raw apply coupon response : ${response.body}");
+    debugPrint("payment done: ${response.body}");
 
     final json = jsonDecode(response.body);
     return ApiResponse<void>.fromJson(json, (_) => null);

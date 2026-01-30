@@ -1,3 +1,4 @@
+import 'package:app/config/helper/widgets/cylinder_line.dart';
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,108 +17,150 @@ class ConfirmedRide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (BuildContext context, HomeProvider controller, Widget? child) {
-        
-    if (controller.flow == HomeFlow.driverArrived &&
-        !controller.driverArrivedPopupShown) {
+        if (controller.flow == HomeFlow.driverArrived &&
+            !controller.driverArrivedPopupShown) {
 
-      controller.driverArrivedPopupShown = true;
+              debugPrint("inside..........");
+          controller.driverArrivedPopupShown = true;
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDriverArrivedSheet(context);
-      });
-    }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDriverArrivedSheet(context);
+          });
+        }
         return DraggableScrollableSheet(
           initialChildSize: 0.55,
-          minChildSize: 0.55,
+          minChildSize: 0.35,
           maxChildSize: 1,
-          builder: (_, __) {
+          builder: (context, scrollController) {
             return Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16 , vertical: 5),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  controller.flow == HomeFlow.driverArrived
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.check_circle, color: Colors.green),
-                            SizedBox(width: 8),
-                            Text(
-                              "Driver is arrived",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.check_circle, color: Colors.green),
-                            SizedBox(width: 8),
-                            Text(
-                              "Your ride is confirmed",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        ),
-
-                  Divider(),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      Text(
-                        confiremRideDetails.vehicle.number,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacer(),
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showCancelRideDialog(context, controller, rideId);
-                            },
-                            child: const Text(
-                              "Cancel ride",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
+              child: SingleChildScrollView(
+                controller: scrollController, // ⭐ VERY IMPORTANT
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    cylinderLine(),
+                    SizedBox(height: 10),
+                    controller.flow == HomeFlow.driverArrived
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.check_circle, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text(
+                                "Driver is arrived",
+                                style: TextStyle(fontSize: 18),
                               ),
-                            ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.check_circle, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text(
+                                "Your ride is confirmed",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
                           ),
 
-                          Text("Start with OTP : ${confiremRideDetails.otp}"),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(confiremRideDetails.vehicle.type),
-                  const SizedBox(height: 10),
-                  Text("${confiremRideDetails.driver.fullName} ⭐ ${4.3}"),
+                    const Divider(),
 
-                  const SizedBox(height: 20),
-                  Spacer(),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Message your driver...",
-                      prefixIcon: const Icon(Icons.message),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          confiremRideDetails.vehicle.number,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                showCancelRideDialog(
+                                  context,
+                                  controller,
+                                  rideId,
+                                );
+                              },
+                              child: const Text(
+                                "Cancel ride",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                            Text("Start with OTP : ${confiremRideDetails.otp}"),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    Text(confiremRideDetails.vehicle.type),
+                    const SizedBox(height: 10),
+                    Text("${confiremRideDetails.driver.fullName} ⭐ 4.3"),
+
+                    const SizedBox(height: 40), // 👈 instead of Spacer
+
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: "Message your driver...",
+                        prefixIcon: const Icon(Icons.message),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 40), // allows drag
+
+                    Card(
+                      color: Colors.white,
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                "Popular Fare:₹${confiremRideDetails.ride.finalFare.toStringAsFixed(0)}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Divider(),
+                            ListTile(
+                              leading: Icon(Icons.money),
+                              title: Text(controller.selectedPayment),
+                              trailing: Text("Change"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -242,45 +285,75 @@ void showCancelRideDialog(
   );
 }
 
-
 void showDriverArrivedSheet(BuildContext context) {
   showDialog(
     context: context,
-   
-    builder: (_) {
-      return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8),
-
-            const Text(
-              "Driver Arrived",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+    barrierDismissible: false,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.directions_bike,
+                  color: Colors.white,
+                  size: 32,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-            const Text(
-              "Your driver has arrived at the pickup location.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
+              // Title
+              const Text(
+                'Driver Arrived',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 8),
+
+              // Message
+              const Text(
+                'Your driver has arrived at the pickup location.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     },

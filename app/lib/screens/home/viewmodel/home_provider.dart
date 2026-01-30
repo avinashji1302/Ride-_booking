@@ -5,6 +5,7 @@ import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
+import 'package:app/screens/home/model/get_due_payment_model.dart';
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
     hide Location;
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
@@ -37,9 +38,12 @@ class HomeProvider extends ChangeNotifier {
 
   String vehicleType = "";
   String selectedPayment = "Cash";
+  GetDuePaymentModel? _duePayment;
 
   RideEstimateResultModel? get allEstimatedResult => _allEstemiateREsult;
   List<VehicleFare> get allVehicleFares => _allVehicleFare;
+
+  GetDuePaymentModel? get duePayment => _duePayment;
 
   Position? position;
 
@@ -437,7 +441,9 @@ class HomeProvider extends ChangeNotifier {
     debugPrint("ride id : $rideId");
     try {
       final response = await homeRepository.getDuePayemnt(rideId);
-      if (response.data != null) {}
+      if (response.data != null) {
+        _duePayment = response.data;
+      }
 
       loading = false;
       notifyListeners();
@@ -454,7 +460,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  //---------------------------------------- Payment Done  -------------------------------------------
+  //----------------------------------------  Payment Done  -------------------------------------------
 
   Future<ApiResponse> payemntDone(String rideId) async {
     loading = true;
@@ -463,8 +469,6 @@ class HomeProvider extends ChangeNotifier {
     debugPrint("ride id : $rideId");
     try {
       final response = await homeRepository.paymentDone(rideId);
-    
-
       loading = false;
       notifyListeners();
       return ApiResponse(success: response.success, message: response.message);
