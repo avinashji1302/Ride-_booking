@@ -1,5 +1,5 @@
-import 'package:app/config/helper/common/schedule_time.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
+import 'package:app/config/helper/widgets/cylinder_line.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,14 +29,7 @@ class SctollableCard extends StatelessWidget {
             children: [
               const SizedBox(height: 12),
 
-              Container(
-                width: 50,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.red.shade300,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
+              cylinderLine(),
 
               const SizedBox(height: 12),
 

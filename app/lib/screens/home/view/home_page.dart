@@ -10,7 +10,8 @@ import 'package:app/screens/home/widgets/sctollable_card.dart';
 import 'package:app/screens/home/view/book_ride_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/home/widgets/waiting_driver.dart';
-import 'package:app/screens/old_money/view/ola_money.dart';
+import 'package:app/screens/ola_money/view/ola_money.dart';
+import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/view/user_profile.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:flutter/material.dart';
@@ -32,26 +33,30 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     final homeProvider = context.read<HomeProvider>();
+    final profileProvider = context.read<ProfileProvider>();
+
 
     SocketService().attachHomeProvider(homeProvider);
 
     homeProvider.initLocation();
+     profileProvider.getProfile();
 
     debugPrint("🏠 HomePage initialized & provider attached");
   }
 
   @override
   Widget build(BuildContext context) {
-    final pofileProvider = context.watch<ProfileProvider>();
+    // final pofileProvider = context.watch<ProfileProvider>();
+      final oldMoneyProvider = context.watch<OlaMoneyProvider>();
 
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
-        child: Consumer<SignInProvider>(
+        child: Consumer<ProfileProvider>(
           builder:
               (
                 BuildContext context,
-                SignInProvider signInProvider,
+                ProfileProvider profileProvider,
                 Widget? child,
               ) {
                 return SafeArea(
@@ -67,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              signInProvider.userDetails?.fullName ??
+                              profileProvider.userDetails?.fullName ??
                                   "user name not found",
                               style: const TextStyle(
                                 fontSize: 16,
@@ -76,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                             ),
 
                             Text(
-                              signInProvider.userDetails?.email ??
+                              profileProvider.userDetails?.email ??
                                   "email not found",
                               style: const TextStyle(
                                 fontSize: 12,
@@ -99,12 +104,12 @@ class _HomePageState extends State<HomePage> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                final response = await pofileProvider
+                                final response = await profileProvider
                                     .getProfile();
 
                                 if (response.success) {
                                   debugPrint(
-                                    "Successfully deleted : ${response.message}",
+                                    " : ${response.message}",
                                   );
 
                                   Navigator.push(
@@ -116,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                                 } else {
                                   if (response.success) {
                                     debugPrint(
-                                      "Successfully deleted : ${response.message}",
+                                      " : ${response.message}",
                                     );
                                   }
                                 }
@@ -132,12 +137,15 @@ class _HomePageState extends State<HomePage> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                final response = await pofileProvider
+                                final response = await profileProvider
                                     .getProfile();
+                                    final olaResponseData = await oldMoneyProvider.olaMoneyPayHistoryStatus();
+
+                                    debugPrint("ola response : $olaResponseData");
 
                                 if (response.success) {
                                   debugPrint(
-                                    "Successfully deleted : ${response.message}",
+                                    " : ${response.message}",
                                   );
 
                                   Navigator.push(
@@ -149,22 +157,22 @@ class _HomePageState extends State<HomePage> {
                                 } else {
                                   if (response.success) {
                                     debugPrint(
-                                      "Successfully deleted : ${response.message}",
+                                      " : ${response.message}",
                                     );
                                   }
                                 }
                               },
                               child: ListTile(
-                                leading: Icon(Icons.home),
+                                leading: Icon(Icons.currency_rupee_sharp),
                                 title: Text("Ola Money"),
                               ),
                             ),
                             ListTile(
-                              leading: Icon(Icons.home),
+                              leading: Icon(Icons.currency_exchange_outlined),
                               title: Text("Payments"),
                             ),
                             ListTile(
-                              leading: Icon(Icons.home),
+                              leading: Icon(Icons.info),
                               title: Text("About"),
                             ),
                           ],
@@ -180,11 +188,11 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(color: Colors.red),
                         ),
                         onTap: () async {
-                          final response = await pofileProvider.logout();
+                          final response = await profileProvider.logout();
 
                           if (response.success) {
                             debugPrint(
-                              "Successfully deleted : ${response.message}",
+                              " : ${response.message}",
                             );
 
                             Navigator.push(
@@ -194,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             if (response.success) {
                               debugPrint(
-                                "Successfully deleted : ${response.message}",
+                                " : ${response.message}",
                               );
                             }
                           }

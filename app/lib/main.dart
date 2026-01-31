@@ -7,7 +7,7 @@ import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
 import 'package:app/screens/home/view/home_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
-import 'package:app/screens/old_money/view_model/ola_money_provider.dart';
+import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

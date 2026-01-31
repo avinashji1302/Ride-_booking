@@ -59,7 +59,7 @@ class HomeRepository {
       body: request.toJson(),
     );
 
-    debugPrint(("Rawa data  create : : ${response.body}"));
+    debugPrint(("Ride created: : ${  response.body}"));
 
     final json = jsonDecode(response.body);
 

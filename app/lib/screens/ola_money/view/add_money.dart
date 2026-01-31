@@ -1,5 +1,5 @@
 import 'package:app/config/helper/common/top_snacbar.dart';
-import 'package:app/screens/old_money/view_model/ola_money_provider.dart';
+import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

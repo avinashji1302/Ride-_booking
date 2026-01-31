@@ -19,10 +19,14 @@ class ApiEndpoints {
   static const upiPayment =
       "$baseUrl/v1/user/wallet/payment-details?paymentMethod=upi";
   static const walletRechare = "$baseUrl/v1/user/wallet/recharge";
+  static const pendingPayemnt = "$baseUrl/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10";
+
+
   static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
     static const paymentDone = "$baseUrl/v1/user/ride/paidPayment";
 
   // http://localhost:5678/v1/user/wallet/recharge
   // GET 'http://localhost:5678/v1/user/ride/paymentDue?rideId=6979f2813fe3878493706b8f' \
   // 'http://localhost:5678/v1/user/ride/paidPayment'
+  // http://localhost:5678/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10%22
 }
