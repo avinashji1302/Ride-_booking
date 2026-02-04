@@ -1,13 +1,12 @@
 import 'package:app/config/Socket/socket.dart';
-import 'package:app/config/helper/common/draggble_sheet.dart';
+import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/theme/theme_provider.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
-import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/home/widgets/confirmed_ride.dart';
 import 'package:app/screens/home/widgets/reached_destination.dart';
 import 'package:app/screens/home/widgets/ride_selection.dart';
 import 'package:app/screens/home/widgets/ride_started.dart';
 import 'package:app/screens/home/widgets/sctollable_card.dart';
-import 'package:app/screens/home/view/book_ride_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/home/widgets/waiting_driver.dart';
 import 'package:app/screens/ola_money/view/ola_money.dart';
@@ -35,23 +34,22 @@ class _HomePageState extends State<HomePage> {
     final homeProvider = context.read<HomeProvider>();
     final profileProvider = context.read<ProfileProvider>();
 
-
     SocketService().attachHomeProvider(homeProvider);
 
     homeProvider.initLocation();
-     profileProvider.getProfile();
+    profileProvider.getProfile();
 
     debugPrint("🏠 HomePage initialized & provider attached");
   }
 
   @override
   Widget build(BuildContext context) {
-    // final pofileProvider = context.watch<ProfileProvider>();
-      final oldMoneyProvider = context.watch<OlaMoneyProvider>();
+    final oldMoneyProvider = context.watch<OlaMoneyProvider>();
 
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
+        // backgroundColor: AppColor.primaryYellow,
         child: Consumer<ProfileProvider>(
           builder:
               (
@@ -102,35 +100,44 @@ class _HomePageState extends State<HomePage> {
                               leading: Icon(Icons.home),
                               title: Text("Home"),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                final response = await profileProvider
-                                    .getProfile();
+                            // GestureDetector(
+                            //   onTap: () async {
+                            //     final response = await profileProvider
+                            //         .getProfile();
 
-                                if (response.success) {
-                                  debugPrint(
-                                    " : ${response.message}",
-                                  );
+                            //     if (response.success) {
+                            //       debugPrint(" : ${response.message}");
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => UserProfile(),
-                                    ),
-                                  );
-                                } else {
-                                  if (response.success) {
-                                    debugPrint(
-                                      " : ${response.message}",
-                                    );
-                                  }
-                                }
+                            //       Navigator.push(
+                            //         context,
+                            //         MaterialPageRoute(
+                            //           builder: (_) => UserProfile(),
+                            //         ),
+                            //       );
+                            //     } else {
+                            //       if (response.success) {
+                            //         debugPrint(" : ${response.message}");
+                            //       }
+                            //     }
+                            //   },
+                            //   child: ListTile(
+                            //     leading: Icon(Icons.person),
+                            //     title: Text("Profile"),
+                            //   ),
+                            // ),
+                            ListTile(
+                              leading: const Icon(Icons.person),
+                              title: const Text("Profile"),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const UserProfile(),
+                                  ),
+                                );
                               },
-                              child: ListTile(
-                                leading: Icon(Icons.person),
-                                title: Text("Profile"),
-                              ),
                             ),
+
                             ListTile(
                               leading: Icon(Icons.add_location),
                               title: Text("History"),
@@ -139,14 +146,13 @@ class _HomePageState extends State<HomePage> {
                               onTap: () async {
                                 final response = await profileProvider
                                     .getProfile();
-                                    final olaResponseData = await oldMoneyProvider.olaMoneyPayHistoryStatus();
+                                final olaResponseData = await oldMoneyProvider
+                                    .olaMoneyPayHistoryStatus();
 
-                                    debugPrint("ola response : $olaResponseData");
+                                debugPrint("ola response : $olaResponseData");
 
                                 if (response.success) {
-                                  debugPrint(
-                                    " : ${response.message}",
-                                  );
+                                  debugPrint(" : ${response.message}");
 
                                   Navigator.push(
                                     context,
@@ -156,9 +162,7 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 } else {
                                   if (response.success) {
-                                    debugPrint(
-                                      " : ${response.message}",
-                                    );
+                                    debugPrint(" : ${response.message}");
                                   }
                                 }
                               },
@@ -174,6 +178,32 @@ class _HomePageState extends State<HomePage> {
                             ListTile(
                               leading: Icon(Icons.info),
                               title: Text("About"),
+                            ),
+
+                            Consumer<ThemeProvider>(
+                              builder: (context, themeProvider, _) {
+                                return ListTile(
+                                  leading: Icon(
+                                    themeProvider.isDarkMode
+                                        ? Icons.dark_mode
+                                        : Icons.light_mode,
+                                  ),
+                                  title: Text(
+                                    themeProvider.isDarkMode
+                                        ? "Dark Mode"
+                                        : "Light Mode",
+                                  ),
+                                  trailing: Switch(
+                                    value: themeProvider.isDarkMode,
+                                    onChanged: (_) {
+                                      themeProvider.toggleTheme();
+                                    },
+                                  ),
+                                  onTap: () {
+                                    themeProvider.toggleTheme();
+                                  },
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -191,9 +221,7 @@ class _HomePageState extends State<HomePage> {
                           final response = await profileProvider.logout();
 
                           if (response.success) {
-                            debugPrint(
-                              " : ${response.message}",
-                            );
+                            debugPrint(" : ${response.message}");
 
                             Navigator.push(
                               context,
@@ -201,9 +229,7 @@ class _HomePageState extends State<HomePage> {
                             );
                           } else {
                             if (response.success) {
-                              debugPrint(
-                                " : ${response.message}",
-                              );
+                              debugPrint(" : ${response.message}");
                             }
                           }
                         },
@@ -224,6 +250,7 @@ class _HomePageState extends State<HomePage> {
           return Stack(
             children: [
               GoogleMap(
+                mapType: MapType.normal,
                 onMapCreated: controller.onMapCreated,
                 initialCameraPosition: CameraPosition(
                   target: controller.position != null
@@ -248,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Card(
                     shape: const CircleBorder(),
-                    color: Colors.white,
+                    color: AppColor.lightyellow,
                     child: Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: Icon(Icons.menu),
@@ -256,6 +283,38 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+
+              if ((controller.flow == HomeFlow.accepted && rideId != null) ||
+                  controller.flow == HomeFlow.driverArrived && rideId != null)
+                Positioned(
+                  left: 20,
+                  bottom: 350,
+                  child: Card(
+                    shape: Border.all(color: AppColor.primaryYellow),
+                    color: AppColor.primaryYellow,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 5,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            "OTP",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            controller.confiremRideDetails!.otp,
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
 
               if (controller.flow == HomeFlow.searchDestination)
                 SctollableCard(),

@@ -1,3 +1,5 @@
+import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/helper/common/location_text_field.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/helper/widgets/cylinder_line.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
@@ -35,33 +37,11 @@ class SctollableCard extends StatelessWidget {
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Enter destination",
-                    prefixIcon: const Icon(Icons.search, color: Colors.red),
-                    suffixIcon: GestureDetector(
-                      onTap: () async {
-                        // final scheduledFor = await pickDateTime(context);
+                child: 
+                
+              
 
-                        // if (scheduledFor == null) {
-                        
-                        //   return;
-                        // }
-                    
-                       
-                        // print(scheduledFor);
-                      },
-                      child: Icon(Icons.alarm, size: 45),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                LocationTextField(icon: Icons.search, iconColor: AppColor.primaryYellow, hint: 'Enter destination', value: '',)
               ),
 
               const SizedBox(height: 10),
@@ -125,7 +105,7 @@ class SctollableCard extends StatelessWidget {
                     color: Colors.red.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.location_on, color: Colors.red),
+                  child: const Icon(Icons.location_on, color:AppColor.primaryYellow),
                 ),
 
                 const SizedBox(width: 12),

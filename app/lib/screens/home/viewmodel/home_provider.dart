@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/config/device/location_permission.dart';
 import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
@@ -103,10 +105,14 @@ class HomeProvider extends ChangeNotifier {
 
   Set<Marker> get markers => _markers;
   Set<Polyline> get polylines => _polylines;
-  GoogleMapController? _mapController;
+  // GoogleMapController? _mapController;
+
+ final Completer<GoogleMapController> _mapController =Completer();
 
   void onMapCreated(GoogleMapController mapController) {
-    _mapController = mapController;
+    // _mapController = mapController;
+
+    _mapController.complete(mapController);
 
     print(
       "location lat and long : ${position!.latitude} ${position!.longitude}",
@@ -116,23 +122,23 @@ class HomeProvider extends ChangeNotifier {
     if (position != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
         _addUserMarker(); // Add marker first
-        _moveCameraToUser(); // Then move camera
+      //  _moveCameraToUser(); // Then move camera
       });
     }
     notifyListeners();
   }
 
-  void _moveCameraToUser() {
-    _mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(position!.latitude, position!.longitude),
-          zoom: 12,
-          tilt: 45,
-        ),
-      ),
-    );
-  }
+  // void _moveCameraToUser() {
+  //   _mapController?.animateCamera(
+  //     CameraUpdate.newCameraPosition(
+  //       CameraPosition(
+  //         target: LatLng(position!.latitude, position!.longitude),
+  //         zoom: 12,
+  //         tilt: 45,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _addUserMarker() {
     if (position == null) return;

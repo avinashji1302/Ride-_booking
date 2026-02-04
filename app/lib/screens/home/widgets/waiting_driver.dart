@@ -1,3 +1,4 @@
+import 'package:app/config/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
 class WaitingForDriverSheet extends StatelessWidget {
@@ -25,7 +26,7 @@ class WaitingForDriverSheet extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
- const LinearProgressIndicator(),
+ const LinearProgressIndicator(color: AppColor.primaryYellow,),
 
    const SizedBox(height: 50),
               /// Driver Searching Animation

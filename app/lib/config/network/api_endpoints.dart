@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const baseUrl = "http://192.168.2.143:5678";
+  static const baseUrl = "http://192.168.1.36:5678";
   // static const baseUrl = "http://192.168.2.239:5678";
 
   static const register = "$baseUrl/v1/user/register";
@@ -13,7 +13,11 @@ class ApiEndpoints {
   static const rideCreate = "$baseUrl/v1/user/ride/create";
   static const cancelRide = "$baseUrl/v1/user/ride/cancel";
   static const logout = "$baseUrl/v1/user/logout";
+
   static const profile = "$baseUrl/v1/user/getProfile";
+  static const updateProfile = "$baseUrl/v1/user/updateProfile";
+   static const uploadImage = "$baseUrl/v1/user/upload-image";
+
   static const coupon = "$baseUrl/v1/user/ride/apply-promo";
   static const schedule = "$baseUrl/v1/user/ride/schedule";
   static const upiPayment =
@@ -22,11 +26,12 @@ class ApiEndpoints {
   static const pendingPayemnt = "$baseUrl/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10";
 
 
-  static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
+    static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
     static const paymentDone = "$baseUrl/v1/user/ride/paidPayment";
 
-  // http://localhost:5678/v1/user/wallet/recharge
-  // GET 'http://localhost:5678/v1/user/ride/paymentDue?rideId=6979f2813fe3878493706b8f' \
-  // 'http://localhost:5678/v1/user/ride/paidPayment'
-  // http://localhost:5678/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10%22
+ 
+//  http://192.168.2.143:5678/v1/user/updateProfile%27
+// curl --location 'http://192.168.2.143:5678/v1/user/upload-image' \
+// --header 'Authorization: Bearer AUTH_BEARER_TOKEN' \
+// --form 'image=@"/path/to/file"'
 }

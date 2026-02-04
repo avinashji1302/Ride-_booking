@@ -1,5 +1,6 @@
 import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/storage/auth_storage.dart';
+import 'package:app/config/theme/theme_provider.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
@@ -16,8 +17,7 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize Firebase (uncomment when needed)
-  // await Firebase.initializeApp();
+
 
   runApp(const MyApp());
 }
@@ -38,16 +38,31 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => OlaMoneyProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
         // ✅ Don't initialize ResetPasswordProvider here - it needs parameters
         // ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Your App',
-        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-        // ✅ Use AuthCheck widget to determine initial screen
-        home: const AuthCheck(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Your App',
+
+            theme: ThemeData(brightness: Brightness.light, useMaterial3: true),
+
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              useMaterial3: true,
+            ),
+
+            themeMode: themeProvider.isDarkMode
+                ? ThemeMode.dark
+                : ThemeMode.light,
+
+            home: const AuthCheck(),
+          );
+        },
       ),
     );
   }

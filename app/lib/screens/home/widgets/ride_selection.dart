@@ -1,5 +1,7 @@
+import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/draggble_sheet.dart';
 import 'package:app/config/helper/common/schedule_time.dart';
+import 'package:app/config/helper/common/location_text_field.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
@@ -33,9 +35,9 @@ class RideSelectionSheet extends StatelessWidget {
                 Column(
                   children: [
                     /// ───── PICKUP (FIXED)
-                    _LocationTextField(
+                    LocationTextField(
                       icon: Icons.my_location,
-                      iconColor: Colors.green,
+                       iconColor: AppColor.primaryYellow,
                       hint: "Current Location",
                       value: homeProvider
                           .allEstimatedResult!
@@ -47,9 +49,9 @@ class RideSelectionSheet extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     /// ───── DROP (FIXED)
-                    _LocationTextField(
+                    LocationTextField(
                       icon: Icons.location_on,
-                      iconColor: Colors.red,
+                      iconColor: AppColor.primaryYellow,
                       hint: "Destination Location",
                       value: homeProvider
                           .allEstimatedResult!
@@ -69,55 +71,92 @@ class RideSelectionSheet extends StatelessWidget {
                           final data = homeProvider.allVehicleFares[index];
 
                           debugPrint("Estimated data : $data");
-                         final originalFare = (data.estimatedFare).toDouble();
+                          final originalFare = (data.estimatedFare).toDouble();
 
                           final discountedFare = homeProvider.getDiscountedFare(
                             originalFare,
                           );
 
-                          return Material(
-                            color: Colors.transparent,
-                            clipBehavior: Clip.none,
-                            borderRadius: BorderRadius.circular(5),
+                          final bool isSelected =
+                              homeProvider.vehicleType == data.vehicleType;
+
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.symmetric(vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 5,
+                            ),
+                            height:  50, // 👈 height highlight
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColor.primaryYellow.withOpacity(0.12)
+                                  : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColor.primaryYellow
+                                    : Colors.transparent,
+                                width: 1.5,
+                              ),
+                            ),
                             child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
                               onTap: () {
                                 homeProvider.vehicleType = data.vehicleType;
-
-                                debugPrint("Typr: ${homeProvider.vehicleType}");
+                                homeProvider.notifyListeners();
                               },
-                              child: ListTile(
-                                leading: const Icon(Icons.directions_car),
-                                title: Text(
-                                  data.vehicleType,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.directions_car,
+                                    color: isSelected
+                                        ? AppColor.primaryYellow
+                                        : Colors.grey,
                                   ),
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (homeProvider.isCouponApplied)
-                                      Text(
-                                        "₹${originalFare.toStringAsFixed(0)}",
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                        ),
-                                      ),
-                                    Text(
-                                      "₹${discountedFare.toStringAsFixed(0)}",
+
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Text(
+                                      data.vehicleType,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: homeProvider.isCouponApplied
-                                            ? Colors.green
-                                            : Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: isSelected
+                                            ? Colors.black
+                                            : Colors.grey.shade800,
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      if (homeProvider.isCouponApplied)
+                                        Text(
+                                          "₹${originalFare.toStringAsFixed(0)}",
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                          ),
+                                        ),
+                                      Text(
+                                        "₹${discountedFare.toStringAsFixed(0)}",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: isSelected
+                                              ? AppColor.primaryYellow
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -314,14 +353,16 @@ class RideSelectionSheet extends StatelessWidget {
 
                           SizedBox(height: 10),
                           Container(
-                            color: Colors.black,
+                            color: AppColor.primaryYellow,
                             child: GestureDetector(
                               onTap: () async {
                                 final result = await homeProvider.createRide(
                                   id,
                                 );
 
-                                debugPrint("message : ${result.message} ${result.data}");
+                                debugPrint(
+                                  "message : ${result.message} ${result.data}",
+                                );
                                 if (result.success) {
                                   homeProvider.goToWaiting();
                                 } else {
@@ -367,7 +408,6 @@ class RideSelectionSheet extends StatelessWidget {
                           return;
                         }
 
-
                         print(scheduledTime);
                       },
                       child: FaIcon(FontAwesomeIcons.alarmClock),
@@ -383,35 +423,52 @@ class RideSelectionSheet extends StatelessWidget {
   }
 }
 
-class _LocationTextField extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String hint;
-  final String value;
+// class _LocationTextField extends StatelessWidget {
+//   final IconData icon;
+//   final Color iconColor;
+//   final String hint;
+//   final String value;
 
-  const _LocationTextField({
-    required this.icon,
-    required this.iconColor,
-    required this.hint,
-    required this.value,
-  });
+//   const _LocationTextField({
+//     required this.icon,
+//     required this.iconColor,
+//     required this.hint,
+//     required this.value,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      readOnly: true,
-      controller: TextEditingController(text: value),
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(0),
-        prefixIcon: Icon(icon, color: iconColor),
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 44, 
+//       child: TextField(
+//         readOnly: true,
+//         controller: TextEditingController(text: value),
+//         style: const TextStyle(
+//           fontSize: 13,
+//           fontWeight: FontWeight.w500,
+//         ),
+//         decoration: InputDecoration(
+//           prefixIcon: Icon(icon, color: iconColor, size: 20),
+//           hintText: hint,
+//           isDense: true, 
+//           contentPadding: const EdgeInsets.symmetric(vertical: 10),
+//           enabledBorder: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(10),
+//             borderSide: const BorderSide(
+//               color: AppColor.primaryYellow, 
+//               width: 1.2,
+//             ),
+//           ),
+//           focusedBorder: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(10),
+//             borderSide: const BorderSide(
+//               color: AppColor.primaryYellow,
+//               width: 1.4,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
