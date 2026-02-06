@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
-  static final SocketService _instance = SocketService._internal();
-  factory SocketService() => _instance;
+  static final SocketService _instance = SocketService._internal(); // creating an instance 
+  factory SocketService() => _instance; // assign the same instance every time to SocketService so that 
   SocketService._internal();
 
   IO.Socket? socket;
@@ -98,19 +98,22 @@ class SocketService {
 
 
 //   // REACHED DESTINATION
-  socket!.on("user:reachedDestination", (data) {
-    debugPrint("🏁 reached desination : $data");
+  socket!.on("user:reachedDestination", (data) async {
+    debugPrint("🏁 reached desination : ${data['ride']}");
+    // _homeProvider.onReachedAtDestination(data['ride']);
+
     _homeProvider.reachedDestination();
+   await  _homeProvider.getDuePayment(_homeProvider.confiremRideDetails!.ride.id);
   });
-    //   // RIDE COMPLETED
+    //   // RIDE COMPLETED;
   socket!.on("user:rideCompleted", (data)  {
-    // debugPrint("🏁 Ride Completed: $data");
-    // _homeProvider.reachedDestination();
+    debugPrint("🏁 Ride Completed: $data");
+     _homeProvider.showRatingSheet();
    
   });
 
     socket!.on("user:rideCancelled", (data) {
-      debugPrint("❌ Ride Cancelled by user........: $data");
+      debugPrint("❌ Ride Cancelled by user........: ${data['ride']}");
     });
   }
 

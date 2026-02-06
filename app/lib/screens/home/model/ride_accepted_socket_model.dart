@@ -72,6 +72,7 @@ class Driver {
   final String fullName;
   final String mobile;
   final double? rating;
+  
 
   Driver({
     required this.id,

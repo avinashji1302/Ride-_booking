@@ -94,32 +94,57 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 ),
                 const SizedBox(height: 12),
                 CommonTextField(
-                  controller: provider.addressController, // ✅ Fix: Use addressController
+                  controller: provider
+                      .addressController, // ✅ Fix: Use addressController
                   hintText: 'Enter Updated Address',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    provider.uploadProfileImage();
-                  },
-                  child: const Icon(Icons.import_contacts),
-                ),
-                const SizedBox(height: 30),
-                GestureDetector(
-                  onTap: () async {
-                    debugPrint(
-                      "result........... : ${provider.addressController} ${provider.nameController}",
-                    );
-                    final result = await provider.updateProfile(
-                      provider.nameController!.text,
-                    );
-                    debugPrint("result : $result");
 
-                    if (result.success) {
-                      await provider.getProfile();
-                    }
-                  },
-                  child: const Icon(Icons.home),
-                )
+                // CommonTextField(
+                //   controller: provider
+                //       .addressController, // ✅ Fix: Use addressController
+                //   hintText: 'Enter Updated Address',
+                // ),
+
+                //  const SizedBox(height: 30),
+                Spacer(),
+                Container(
+                  color: AppColor.primaryYellow,
+                  child: GestureDetector(
+                    onTap: () async {
+                      debugPrint(
+                        "result........... : ${provider.addressController} ${provider.nameController}",
+                      );
+                      final result = await provider.updateProfile(
+                        provider.nameController!.text,
+                      );
+                      debugPrint("result : $result");
+
+                      if (result.success) {
+                        await provider.getProfile();
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: provider.isLoading
+                            ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(color: AppColor.lightGrey, strokeWidth: 3,))
+                            : Text(
+                                "Update",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20),
               ],
             ),
           );

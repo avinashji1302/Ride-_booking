@@ -1,12 +1,7 @@
-
-
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/Auth/View/signup/signup_page.dart';
 import 'package:flutter/material.dart';
-
-
-
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -20,36 +15,28 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-             
-
               /// Illustration
               Image.asset(
                 'assets/logo/carlogo.png', // replace with your image
                 height: 260,
               ),
-
+          
               const SizedBox(height: 30),
-
+          
               const Text(
                 "Welcome",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
-
+          
               const SizedBox(height: 10),
-
+          
               const Text(
                 "Have a better sharing experience",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 14),
               ),
-
+          
               const Spacer(),
-
+          
               /// Create Account Button
               SizedBox(
                 width: double.infinity,
@@ -62,18 +49,20 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUpScreen()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                    );
                   },
                   child: const Text(
                     "Create an account",
-                    style: TextStyle(fontSize: 16 , color: AppColor.white),
-                    
+                    style: TextStyle(fontSize: 16, color: AppColor.white),
                   ),
                 ),
               ),
-
+          
               const SizedBox(height: 15),
-
+          
               /// Login Button with email
               SizedBox(
                 width: double.infinity,
@@ -86,7 +75,10 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignInPage()),
+                    );
                   },
                   child: const Text(
                     "Log in with email",
@@ -97,8 +89,9 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-const SizedBox(height: 15),
-                /// Login Button with phone
+              const SizedBox(height: 15),
+          
+              /// Login Button with phone
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -110,7 +103,12 @@ const SizedBox(height: 15),
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage(isPhone: true,)));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SignInPage(isPhone: true),
+                      ),
+                    );
                   },
                   child: const Text(
                     "Log in with phone",

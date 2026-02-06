@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.isDarkMode
                 ? ThemeMode.dark
                 : ThemeMode.light,
+              
 
             home: const AuthCheck(),
           );

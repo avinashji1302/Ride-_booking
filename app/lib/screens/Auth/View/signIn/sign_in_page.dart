@@ -31,177 +31,195 @@ class SignInPage extends StatelessWidget {
               return SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Sign in",
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      !isPhone!
-                          ? InputFieldWidget(
-                              controller: controller.emailController,
-                              hint: "Email",
-                              validator: Validators.validateEmail,
-                              keyboardType: TextInputType.emailAddress,
-
-                              prefixIcon: const Icon(Icons.email),
-                            )
-                          : InputFieldWidget(
-                              controller: controller.phoneController,
-                              hint: "Phone",
-                              validator: Validators.validatePhone,
-                              keyboardType: TextInputType.phone,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              prefixIcon: const Icon(Icons.phone),
-                            ),
-                      SizedBox(height: 10),
-                      InputFieldWidget(
-                        controller: controller.passController,
-                        hint: "Password",
-                        isPassword: true,
-                        validator: Validators.validatePassword,
-                        prefixIcon: const Icon(Icons.lock_outline),
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VarifyEmailPhonePage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Forget Password",
-                          style: TextStyle(color: Colors.red),
-                          textDirection: TextDirection.rtl,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// Sign in button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.primaryYellow,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                  child: Form(
+                    key: controller.formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Sign in",
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
                           ),
-                          onPressed: () async {
-                            final result = await controller.signIn(context , isPhone!);
-
-                            debugPrint("result : ${result.data}");
-
-                            if (result.success) {
-                              AppSnackBar.show(
-                                context,
-                                message: result.message,
-                                backgroundColor: Colors.green,
-                              );
-
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (_) => HomePage()),
-                              );
-                             
-                            } else {
-                              AppSnackBar.show(
-                                context,
-                                message: result.message,
-                                backgroundColor: Colors.red,
-                              );
-                            }
-                          },
-
-                          child: controller.loading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
+                        ),
+                    
+                        const SizedBox(height: 24),
+                    
+                        !isPhone!
+                            ? InputFieldWidget(
+                                controller: controller.emailController,
+                                hint: "Email",
+                                validator: Validators.validateEmail,
+                                keyboardType: TextInputType.emailAddress,
+                    
+                                prefixIcon: const Icon(Icons.email),
                               )
-                            :    const Text(
-                            "Sign in",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                            : InputFieldWidget(
+                                controller: controller.phoneController,
+                                hint: "Phone",
+                                validator: Validators.validatePhone,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
+                                prefixIcon: const Icon(Icons.phone),
+                              ),
+                        SizedBox(height: 10),
+                        InputFieldWidget(
+                          controller: controller.passController,
+                          hint: "Password",
+                          isPassword: true,
+                          validator: Validators.validatePassword,
+                          prefixIcon: const Icon(Icons.lock_outline),
                         ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Text("or"),
-                          ),
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// Social buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          SocialButton(icon: Icons.mail),
-                          SizedBox(width: 15),
-                          SocialButton(icon: Icons.facebook),
-                          SizedBox(width: 15),
-                          SocialButton(icon: Icons.apple),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// Footer
-                      Center(
-                        child: GestureDetector(
+                        const SizedBox(height: 8),
+                        GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignUpScreen(),
+                                builder: (context) => VarifyEmailPhonePage(),
                               ),
                             );
                           },
-                          child: RichText(
-                            text: const TextSpan(
-                              style: TextStyle(color: Colors.black),
-                              children: [
-                                TextSpan(text: "Did not have an account? "),
-                                TextSpan(
-                                  text: "Sign up",
-                                  style: TextStyle(
-                                    color: AppColor.primaryYellow,
-                                    fontWeight: FontWeight.bold,
+                          child: Text(
+                            "Forget Password",
+                            style: TextStyle(color: Colors.red),
+                            textDirection: TextDirection.rtl,
+                          ),
+                        ),
+                    
+                        const SizedBox(height: 20),
+                    
+                        /// Sign in button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColor.primaryYellow,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed:
+                             
+                            
+                          controller.loading
+                              ? null
+                              : () async {
+                                  if (!controller.formKey.currentState!
+                                      .validate()) {
+                                    AppSnackBar.show(
+                                      context,
+                                      message:
+                                          "Please fix the errors in the form",
+                                      backgroundColor: Colors.red,
+                                    );
+                                    return;
+                                  }
+                              final result = await controller.signIn(context , isPhone!);
+                    
+                              debugPrint("result : ${result.data}");
+                    
+                              if (result.success) {
+                                AppSnackBar.show(
+                                  context,
+                                  message: result.message,
+                                  backgroundColor: Colors.green,
+                                );
+                    
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => HomePage()),
+                                );
+                               
+                              } else {
+                                AppSnackBar.show(
+                                  context,
+                                  message: result.message,
+                                  backgroundColor: Colors.red,
+                                );
+                              }
+                            },
+                    
+                            child: controller.loading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
                                   ),
-                                ),
-                              ],
+                                )
+                              :    const Text(
+                              "Sign in",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                    
+                        const SizedBox(height: 20),
+                    
+                        Row(
+                          children: [
+                            Expanded(child: Divider(color: Colors.grey.shade300)),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text("or"),
+                            ),
+                            Expanded(child: Divider(color: Colors.grey.shade300)),
+                          ],
+                        ),
+                    
+                        const SizedBox(height: 20),
+                    
+                        /// Social buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            SocialButton(icon: Icons.mail),
+                            SizedBox(width: 15),
+                            SocialButton(icon: Icons.facebook),
+                            SizedBox(width: 15),
+                            SocialButton(icon: Icons.apple),
+                          ],
+                        ),
+                    
+                        const SizedBox(height: 20),
+                    
+                        /// Footer
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpScreen(),
+                                ),
+                              );
+                            },
+                            child: RichText(
+                              text: const TextSpan(
+                                style: TextStyle(color: Colors.black),
+                                children: [
+                                  TextSpan(text: "Did not have an account? "),
+                                  TextSpan(
+                                    text: "Sign up",
+                                    style: TextStyle(
+                                      color: AppColor.primaryYellow,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

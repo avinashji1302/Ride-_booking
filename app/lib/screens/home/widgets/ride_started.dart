@@ -191,7 +191,7 @@ class RideStartedSheet extends StatelessWidget {
                             children: const [
                               Icon(
                                 Icons.location_on,
-                                color: Colors.red,
+                                color: AppColor.primaryYellow,
                                 size: 18,
                               ),
                               SizedBox(width: 6),

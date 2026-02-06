@@ -26,22 +26,20 @@ class WaitingForDriverSheet extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
- const LinearProgressIndicator(color: AppColor.primaryYellow,),
+              const LinearProgressIndicator(color: AppColor.primaryYellow),
 
-   const SizedBox(height: 50),
+              const SizedBox(height: 50),
+
               /// Driver Searching Animation
               CircleAvatar(
                 radius: 60,
                 child: SizedBox(
                   height: 420,
-                  child: Icon(Icons.person ,size: 50,),
+                  child: Icon(Icons.person, size: 50),
                 ),
               ),
 
               const SizedBox(height: 30),
-
-      
-              
             ],
           ),
         );

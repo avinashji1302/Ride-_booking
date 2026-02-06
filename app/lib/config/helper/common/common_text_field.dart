@@ -1,3 +1,4 @@
+import 'package:app/config/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CommonTextField extends StatelessWidget {
@@ -23,8 +24,14 @@ class CommonTextField extends StatelessWidget {
       keyboardType: keyboardType,
       maxLines: maxLines,
       decoration: InputDecoration(
+        fillColor: AppColor.lightyellow,
         hintText: hintText,
-        border: const OutlineInputBorder(),
+        border:  OutlineInputBorder(
+          borderSide: BorderSide(color: AppColor.darkYellow)
+        ),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColor.darkYellow)),
+        
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColor.darkYellow)),
       ),
     );
   }

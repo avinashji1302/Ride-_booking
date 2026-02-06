@@ -1,7 +1,8 @@
 class ApiEndpoints {
-  static const baseUrl = "http://192.168.1.36:5678";
+  static const baseUrl = "http://192.168.2.191:5678";
   // static const baseUrl = "http://192.168.2.239:5678";
 
+  //Auth
   static const register = "$baseUrl/v1/user/register";
   static const login = "$baseUrl/v1/user/login";
   static const sendLoginOtp = "$baseUrl/v1/user/sendLoginOtp";
@@ -9,29 +10,35 @@ class ApiEndpoints {
   static const forgotPassword = "$baseUrl/v1/user/forgotPassword";
   static const verifyForgotOtp = "$baseUrl/v1/user/verifyUserForgotPasswordOTP";
   static const resetPassword = "$baseUrl/v1/user/resetPassword";
+
   static const estimate = "$baseUrl/v1/user/ride/estimate";
   static const rideCreate = "$baseUrl/v1/user/ride/create";
   static const cancelRide = "$baseUrl/v1/user/ride/cancel";
   static const logout = "$baseUrl/v1/user/logout";
 
+  //profile
   static const profile = "$baseUrl/v1/user/getProfile";
   static const updateProfile = "$baseUrl/v1/user/updateProfile";
-   static const uploadImage = "$baseUrl/v1/user/upload-image";
+  static const uploadImage = "$baseUrl/v1/user/upload-image";
 
+  //other
   static const coupon = "$baseUrl/v1/user/ride/apply-promo";
   static const schedule = "$baseUrl/v1/user/ride/schedule";
+  static const rating = "$baseUrl/v1/user/rating";
+
+  //payment
   static const upiPayment =
       "$baseUrl/v1/user/wallet/payment-details?paymentMethod=upi";
   static const walletRechare = "$baseUrl/v1/user/wallet/recharge";
-  static const pendingPayemnt = "$baseUrl/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10";
+  static const pendingPayemnt =
+      "$baseUrl/v1/user/wallet/pending-recharge-requests?page=1&pageSize=10";
 
+  static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
+  static const paymentDone = "$baseUrl/v1/user/ride/paidPayment";
 
-    static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
-    static const paymentDone = "$baseUrl/v1/user/ride/paidPayment";
-
- 
-//  http://192.168.2.143:5678/v1/user/updateProfile%27
-// curl --location 'http://192.168.2.143:5678/v1/user/upload-image' \
-// --header 'Authorization: Bearer AUTH_BEARER_TOKEN' \
-// --form 'image=@"/path/to/file"'
+  //  http://192.168.2.143:5678/v1/user/updateProfile%27
+  // curl --location 'http://192.168.2.143:5678/v1/user/upload-image' \
+  // --header 'Authorization: Bearer AUTH_BEARER_TOKEN' \
+  // --form 'image=@"/path/to/file"'
+  // curl -s -X POST 'http://localhost:5678/v1/user/rating'
 }

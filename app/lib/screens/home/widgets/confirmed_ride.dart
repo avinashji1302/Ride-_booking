@@ -105,14 +105,14 @@ class ConfirmedRide extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Row(
-                                children: const [
+                                children:  [
                                   Icon(
                                     Icons.star,
                                     size: 14,
                                     color: AppColor.primaryYellow,
                                   ),
                                   SizedBox(width: 4),
-                                  Text("4.3", style: TextStyle(fontSize: 13)),
+                                  Text(confiremRideDetails.driver.rating.toString(), style: TextStyle(fontSize: 13)),
                                   SizedBox(width: 8),
                                   Text(
                                     "• 800m (3min away)",

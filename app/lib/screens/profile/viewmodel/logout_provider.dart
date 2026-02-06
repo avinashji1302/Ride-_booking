@@ -15,31 +15,29 @@ class ProfileProvider extends ChangeNotifier {
 
   UserProfileModle? _userDetails;
 
-  UserProfileModle? get  userDetails=>_userDetails;
+  UserProfileModle? get userDetails => _userDetails;
   //-----------------------------------
 
- TextEditingController? nameController;
-TextEditingController? addressController;
+  TextEditingController? nameController;
+  TextEditingController? addressController;
 
-@override
-void dispose() {
-  nameController?.dispose();
-  addressController?.dispose();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    nameController?.dispose();
+    addressController?.dispose();
+    super.dispose();
+  }
 
-void initializeControllers(String fullName, String address) {
-  nameController?.dispose(); // Dispose old controllers if any
-  addressController?.dispose();
-  
-  nameController = TextEditingController(text: fullName);
-  addressController = TextEditingController(text: address);
-  notifyListeners();
-}
+  void initializeControllers(String fullName, String address) {
+    nameController?.dispose(); // Dispose old controllers if any
+    addressController?.dispose();
+
+    nameController = TextEditingController(text: fullName);
+    addressController = TextEditingController(text: address);
+    notifyListeners();
+  }
 
   bool isLoading = false;
-
-
 
   Future<ApiResponse> logout() async {
     isLoading = true;
@@ -98,7 +96,7 @@ void initializeControllers(String fullName, String address) {
     final XFile? file = await _picker.pickImage(source: source);
     if (file != null) {
       selectedImage = file;
-
+      await uploadProfileImage();
       debugPrint("choosen image : $selectedImage");
       notifyListeners();
     }
@@ -115,8 +113,8 @@ void initializeControllers(String fullName, String address) {
 
       debugPrint("result : $response");
 
-      if(response!=null){
-        profilePic=response.data!;
+      if (response != null) {
+        profilePic = response.data!;
       }
 
       debugPrint("Data is : ${response}");
@@ -138,14 +136,18 @@ void initializeControllers(String fullName, String address) {
 
   //---------------------update Priofile-----------
 
-  Future<ApiResponse> updateProfile(String updatedName ) async {
+  Future<ApiResponse> updateProfile(String updatedName) async {
     isLoading = true;
     notifyListeners();
 
     debugPrint("data is : $updatedName $profilePic");
 
     try {
-      final response = await repository.updateProfile(updatedName , "somewhere in the middle" , profilePic);
+      final response = await repository.updateProfile(
+        updatedName,
+        "somewhere in the middle",
+        profilePic,
+      );
       isLoading = false;
 
       return ApiResponse(success: response.success, message: response.message);

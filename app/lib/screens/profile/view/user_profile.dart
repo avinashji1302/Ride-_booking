@@ -100,7 +100,7 @@ class _UserProfileState extends State<UserProfile> {
                           child: const Icon(
                             Icons.edit,
                             size: 14,
-                            color: Colors.grey,
+                            color: AppColor.primaryYellow,
                           ),
                         ),
                       ),
@@ -131,12 +131,16 @@ class _UserProfileState extends State<UserProfile> {
 
                 // ---------------- WALLET ----------------
                 Card(
+                 color: Colors.white,
                   elevation: 1,
+                  shadowColor: Colors.black12,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: AppColor.primaryYellow.withOpacity(0.4),
+                    ),),
                   child: ListTile(
-                    leading: const Icon(Icons.account_balance_wallet),
+                    leading: const Icon(Icons.account_balance_wallet , color: AppColor.primaryYellow,),
                     title: const Text("Wallet Balance"),
                     trailing: Text(
                       "₹ ${user.wallet}",
@@ -149,24 +153,28 @@ class _UserProfileState extends State<UserProfile> {
 
                 // ---------------- OPTIONS ----------------
                 Card(
+                 color: Colors.white,
                   elevation: 1,
+                  shadowColor: Colors.black12,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: AppColor.primaryYellow.withOpacity(0.4),
+                    ),),
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.history),
+                        leading: const Icon(Icons.history , color: AppColor.primaryYellow,),
                         title: const Text("Ride History"),
                         onTap: () {},
                       ),
-                      const Divider(height: 1),
+                       Divider(height: 1 ,    color: AppColor.primaryYellow.withOpacity(0.4)),
                       ListTile(
-                        leading: const Icon(Icons.settings),
+                        leading: const Icon(Icons.settings , color: AppColor.primaryYellow,),
                         title: const Text("Settings"),
                         onTap: () {},
                       ),
-                      const Divider(height: 1),
+                       Divider(height: 1 ,    color: AppColor.primaryYellow.withOpacity(0.4)),
                       ListTile(
                         leading: const Icon(Icons.logout, color: Colors.red),
                         title: const Text(

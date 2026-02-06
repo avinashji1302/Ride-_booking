@@ -1,5 +1,6 @@
 import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/colors/app_color.dart';
+import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/theme/theme_provider.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/home/widgets/confirmed_ride.dart';
@@ -13,6 +14,7 @@ import 'package:app/screens/ola_money/view/ola_money.dart';
 import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/view/user_profile.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
+import 'package:app/screens/home/widgets/review_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -100,31 +102,7 @@ class _HomePageState extends State<HomePage> {
                               leading: Icon(Icons.home),
                               title: Text("Home"),
                             ),
-                            // GestureDetector(
-                            //   onTap: () async {
-                            //     final response = await profileProvider
-                            //         .getProfile();
-
-                            //     if (response.success) {
-                            //       debugPrint(" : ${response.message}");
-
-                            //       Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //           builder: (_) => UserProfile(),
-                            //         ),
-                            //       );
-                            //     } else {
-                            //       if (response.success) {
-                            //         debugPrint(" : ${response.message}");
-                            //       }
-                            //     }
-                            //   },
-                            //   child: ListTile(
-                            //     leading: Icon(Icons.person),
-                            //     title: Text("Profile"),
-                            //   ),
-                            // ),
+                            
                             ListTile(
                               leading: const Icon(Icons.person),
                               title: const Text("Profile"),
@@ -336,6 +314,30 @@ class _HomePageState extends State<HomePage> {
 
               if (controller.flow == HomeFlow.reachedDestination)
                 ReachedDestination(),
+
+              if (controller.flow == HomeFlow.rideCompleted)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: ReviewScreen(
+                    onSkip: () {
+                      controller.goBackToSearch();
+                    },
+                    onSubmit: (rideId, rating, feedback) async {
+                      debugPrint("⭐ Rating: $rating");
+                      debugPrint("📝 Feedback: $feedback");
+
+                      // API later
+                      controller.goBackToSearch();
+                      // controller.
+                   final result =  await controller.rating(rideId, rating, feedback);
+                   if(result.success){
+                    AppSnackBar.show(context, message: result.message);
+                   }
+                    },
+                  ),
+                ),
             ],
           );
         },

@@ -212,6 +212,33 @@ class HomeRepository {
     final json = jsonDecode(response.body);
     return ApiResponse<void>.fromJson(json, (_) => null);
   }
+
+//-----------------------------Rating------------------------------------------
+    Future<ApiResponse<void>> rating( String rideId , String rating , String feedback
+  ) async {
+    final token = await AuthStorage().getAccessToken();
+
+   
+    final response = await HttpClient.post(
+      ApiEndpoints.rating,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    
+      body: {
+        "rideId": rideId,
+        "rating":rating,
+        "message":feedback
+      }
+    );
+
+    debugPrint("Rating done: ${response.body}");
+
+    final json = jsonDecode(response.body);
+    return ApiResponse<void>.fromJson(json, (_) => null);
+  }
 }
 
 

@@ -268,9 +268,7 @@ class RideSelectionSheet extends StatelessWidget {
                                       debugPrint(result.message);
                                     }
                                   },
-                                  child: homeProvider.loading
-                                      ? CircularProgressIndicator()
-                                      : !homeProvider.isCouponApplied
+                                  child:  !homeProvider.isCouponApplied
                                       ? Row(
                                           children: [
                                             Icon(Icons.local_offer),
@@ -375,7 +373,7 @@ class RideSelectionSheet extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
-                                  child: const Text(
+                                  child:  Text(
                                     "Book Ride",
                                     style: TextStyle(
                                       fontSize: 16,

@@ -19,6 +19,7 @@ class SignInProvider extends ChangeNotifier {
    final TextEditingController phoneController = TextEditingController(
     text: "avinash",
   );
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool loading = false;
   String? error;
 

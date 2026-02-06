@@ -11,6 +11,7 @@ import 'package:app/screens/home/model/get_due_payment_model.dart';
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
     hide Location;
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
+import 'package:app/screens/home/model/socket_model/reached_destination_socket.dart' hide Location;
 import 'package:app/screens/home/respository/home_repository.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -25,6 +26,7 @@ enum HomeFlow {
   driverArrived,
   rideStarted,
   reachedDestination,
+  rideCompleted
 }
 
 class HomeProvider extends ChangeNotifier {
@@ -37,15 +39,19 @@ class HomeProvider extends ChangeNotifier {
   final List<VehicleFare> _allVehicleFare = [];
   RideAcceptedSocketModel? confiremRideDetails;
   bool driverArrivedPopupShown = false;
+  bool userReached=false;
+  bool userRideComplete=false;
 
   String vehicleType = "";
   String selectedPayment = "Cash";
   GetDuePaymentModel? _duePayment;
+  // ReachedDestinationSocket? _reachedDestinationSocket;
 
   RideEstimateResultModel? get allEstimatedResult => _allEstemiateREsult;
   List<VehicleFare> get allVehicleFares => _allVehicleFare;
 
   GetDuePaymentModel? get duePayment => _duePayment;
+  // ReachedDestinationSocket? get reachedDestinationSocket=>_reachedDestinationSocket;
 
   Position? position;
 
@@ -98,6 +104,18 @@ class HomeProvider extends ChangeNotifier {
     selectedPayment = value;
     notifyListeners();
   }
+
+
+  //  void rideCompleted() {
+  //   _flow = HomeFlow.searchDestination;
+
+  //   notifyListeners();
+  // }
+
+  void showRatingSheet() {
+  _flow = HomeFlow.rideCompleted;
+  notifyListeners();
+}
   //----------------------------------Map created---------------------------------------------
 
   final Set<Marker> _markers = {};
@@ -164,6 +182,22 @@ class HomeProvider extends ChangeNotifier {
     await _drawRouteFromRide(confiremRideDetails!);
 
     _flow = HomeFlow.accepted;
+    debugPrint("🔄 Flow changed to ACCEPTED");
+
+    notifyListeners();
+  }
+
+
+
+   Future<void> onReachedAtDestination(ReachedDestinationSocket data) async {
+    debugPrint("🧠 Provider received rideAccepted event");
+    debugPrint("📍 Pickup: ${data.finalFare}");
+    
+    // confiremRideDetails = data;
+    debugPrint("Data is : $data");
+   
+
+    _flow = HomeFlow.reachedDestination;
     debugPrint("🔄 Flow changed to ACCEPTED");
 
     notifyListeners();
@@ -475,6 +509,32 @@ class HomeProvider extends ChangeNotifier {
     debugPrint("ride id : $rideId");
     try {
       final response = await homeRepository.paymentDone(rideId);
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+
+
+
+  //----------------------------------------  Rating -------------------------------------------
+
+  Future<ApiResponse> rating(String rideId , String rating, String feedback) async {
+    loading = true;
+    notifyListeners();
+
+    debugPrint("ride id : $rideId");
+    try {
+      final response = await homeRepository.rating(rideId , rating ,  feedback);
       loading = false;
       notifyListeners();
       return ApiResponse(success: response.success, message: response.message);

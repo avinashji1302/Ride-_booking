@@ -1,3 +1,4 @@
+import 'package:app/config/colors/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -68,11 +69,11 @@ class _InputFieldWidgetState extends State<InputFieldWidget> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: AppColor.primaryYellow),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderSide: const BorderSide(color: AppColor.primaryYellow, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

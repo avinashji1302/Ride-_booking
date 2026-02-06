@@ -150,7 +150,7 @@ class SignUpScreen extends StatelessWidget {
                                   return;
                                 }
 
-                                final result = await provider.register();
+                                final result = await provider.register(context);
 
                                 if (result.success) {
                                   AppSnackBar.show(
