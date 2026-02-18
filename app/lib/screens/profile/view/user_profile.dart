@@ -1,4 +1,6 @@
 import 'package:app/config/colors/app_color.dart';
+import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
+import 'package:app/screens/history/view/history_screen.dart';
 import 'package:app/screens/profile/view/update_profile.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:flutter/material.dart';
@@ -166,7 +168,9 @@ class _UserProfileState extends State<UserProfile> {
                       ListTile(
                         leading: const Icon(Icons.history , color: AppColor.primaryYellow,),
                         title: const Text("Ride History"),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PaymentHistoryScreen()));
+                        },
                       ),
                        Divider(height: 1 ,    color: AppColor.primaryYellow.withOpacity(0.4)),
                       ListTile(
@@ -181,7 +185,22 @@ class _UserProfileState extends State<UserProfile> {
                           "Logout",
                           style: TextStyle(color: Colors.red),
                         ),
-                        onTap: () {},
+                        onTap: () async {
+                          final response = await profileProvider.logout();
+
+                          if (response.success) {
+                            debugPrint(" : ${response.message}");
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SignInPage()),
+                            );
+                          } else {
+                            if (response.success) {
+                              debugPrint(" : ${response.message}");
+                            }
+                          }
+                        },
                       ),
                     ],
                   ),

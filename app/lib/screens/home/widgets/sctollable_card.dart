@@ -60,6 +60,8 @@ class SctollableCard extends StatelessWidget {
                       onTap: () async {
                         final result = await home.getAllEstimtedData();
 
+                        debugPrint("resuilt : $result ${result.data} ${result.message} ${result.success}");
+
                         if (result.success) {
                           AppSnackBar.show(context, message: result.message);
                           home.goToRideSelection();

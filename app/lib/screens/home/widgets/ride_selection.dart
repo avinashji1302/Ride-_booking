@@ -5,6 +5,7 @@ import 'package:app/config/helper/common/location_text_field.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:app/screens/home/widgets/myself.dart';
 import 'package:app/screens/home/widgets/payment_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +18,10 @@ class RideSelectionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
+     
       builder: (context, homeProvider, _) {
+
+         debugPrint("debug : $id");
         return Positioned(
           left: 0,
           right: 0,
@@ -71,10 +75,10 @@ class RideSelectionSheet extends StatelessWidget {
                           final data = homeProvider.allVehicleFares[index];
 
                           debugPrint("Estimated data : $data");
-                          final originalFare = (data.estimatedFare).toDouble();
+                          final originalFare = (data.estimatedFare);
 
                           final discountedFare = homeProvider.getDiscountedFare(
-                            originalFare,
+                           double.tryParse(originalFare) ?? 0.0,
                           );
 
                           final bool isSelected =
@@ -136,7 +140,7 @@ class RideSelectionSheet extends StatelessWidget {
                                     children: [
                                       if (homeProvider.isCouponApplied)
                                         Text(
-                                          "₹${originalFare.toStringAsFixed(0)}",
+                                          "₹${originalFare}",
                                           style: const TextStyle(
                                             fontSize: 11,
                                             color: Colors.grey,
@@ -313,24 +317,12 @@ class RideSelectionSheet extends StatelessWidget {
                                 GestureDetector(
                                   onTap: () async {
                                     //   final String? promoCode = homeProvider.coupnResponse!.discount!.code;
-                                    final String paymentMethod = homeProvider
-                                        .allEstimatedResult!
-                                        .ride
-                                        .paymentMethod;
-                                    final String vehicleType =
-                                        homeProvider.vehicleType;
-                                    final scheduledTime = await pickDateTime(
-                                      context,
-                                    );
-                                    debugPrint(
-                                      "calling schedule :  $paymentMethod , $vehicleType, $scheduledTime",
-                                    );
-                                    homeProvider.scheduledRide(
-                                      "TEST5",
-                                      'mini',
-                                      paymentMethod,
-                                      scheduledTime!,
-                                    );
+                                    showDraggableSheet(
+                                          context,
+                                          child: ProfileWidget(
+                                           
+                                          ),
+                                        );
                                   },
                                   child: Row(
                                     children: [
@@ -359,7 +351,7 @@ class RideSelectionSheet extends StatelessWidget {
                                 );
 
                                 debugPrint(
-                                  "message : ${result.message} ${result.data}",
+                                  "message : ${result.message} ${result.data} ${result.success}",
                                 );
                                 if (result.success) {
                                   homeProvider.goToWaiting();
@@ -388,7 +380,7 @@ class RideSelectionSheet extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 20),
+                    SizedBox(height: 35),
                   ],
                 ),
 

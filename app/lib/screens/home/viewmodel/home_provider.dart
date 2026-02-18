@@ -5,13 +5,17 @@ import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
-import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
+import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart' hide Location;
 import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
 import 'package:app/screens/home/model/get_due_payment_model.dart';
+import 'package:app/screens/home/model/near_by_driver_model.dart' hide Location;
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
     hide Location;
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
-import 'package:app/screens/home/model/socket_model/reached_destination_socket.dart' hide Location;
+import 'package:app/screens/home/model/ride_create_model/ride_response_model.dart'
+    hide RideLocation;
+import 'package:app/screens/home/model/socket_model/reached_destination_socket.dart'
+    hide Location;
 import 'package:app/screens/home/respository/home_repository.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -26,7 +30,7 @@ enum HomeFlow {
   driverArrived,
   rideStarted,
   reachedDestination,
-  rideCompleted
+  rideCompleted,
 }
 
 class HomeProvider extends ChangeNotifier {
@@ -39,8 +43,8 @@ class HomeProvider extends ChangeNotifier {
   final List<VehicleFare> _allVehicleFare = [];
   RideAcceptedSocketModel? confiremRideDetails;
   bool driverArrivedPopupShown = false;
-  bool userReached=false;
-  bool userRideComplete=false;
+  bool userReached = false;
+  bool userRideComplete = false;
 
   String vehicleType = "";
   String selectedPayment = "Cash";
@@ -57,6 +61,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> initLocation() async {
     position = await _locationService.checkAndFetchLocation();
+    await nearByAvailbeDrvier();
     notifyListeners();
   }
 
@@ -64,7 +69,10 @@ class HomeProvider extends ChangeNotifier {
   HomeFlow get flow => _flow;
 
   void goToRideSelection() {
+    debugPrint("floe id now : $_flow");
     _flow = HomeFlow.selectRide;
+
+    debugPrint("floe id now : $_flow");
     notifyListeners();
   }
 
@@ -105,7 +113,6 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //  void rideCompleted() {
   //   _flow = HomeFlow.searchDestination;
 
@@ -113,9 +120,9 @@ class HomeProvider extends ChangeNotifier {
   // }
 
   void showRatingSheet() {
-  _flow = HomeFlow.rideCompleted;
-  notifyListeners();
-}
+    _flow = HomeFlow.rideCompleted;
+    notifyListeners();
+  }
   //----------------------------------Map created---------------------------------------------
 
   final Set<Marker> _markers = {};
@@ -125,7 +132,7 @@ class HomeProvider extends ChangeNotifier {
   Set<Polyline> get polylines => _polylines;
   // GoogleMapController? _mapController;
 
- final Completer<GoogleMapController> _mapController =Completer();
+  final Completer<GoogleMapController> _mapController = Completer();
 
   void onMapCreated(GoogleMapController mapController) {
     // _mapController = mapController;
@@ -140,7 +147,7 @@ class HomeProvider extends ChangeNotifier {
     if (position != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
         _addUserMarker(); // Add marker first
-      //  _moveCameraToUser(); // Then move camera
+        //  _moveCameraToUser(); // Then move camera
       });
     }
     notifyListeners();
@@ -187,15 +194,12 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-   Future<void> onReachedAtDestination(ReachedDestinationSocket data) async {
+  Future<void> onReachedAtDestination(ReachedDestinationSocket data) async {
     debugPrint("🧠 Provider received rideAccepted event");
     debugPrint("📍 Pickup: ${data.finalFare}");
-    
+
     // confiremRideDetails = data;
     debugPrint("Data is : $data");
-   
 
     _flow = HomeFlow.reachedDestination;
     debugPrint("🔄 Flow changed to ACCEPTED");
@@ -245,23 +249,6 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void _fitRouteBounds(List<LatLng> points) {
-  //   final bounds = LatLngBounds(
-  //     southwest: LatLng(
-  //       points.map((e) => e.latitude).reduce((a, b) => a < b ? a : b),
-  //       points.map((e) => e.longitude).reduce((a, b) => a < b ? a : b),
-  //     ),
-  //     northeast: LatLng(
-  //       points.map((e) => e.latitude).reduce((a, b) => a > b ? a : b),
-  //       points.map((e) => e.longitude).reduce((a, b) => a > b ? a : b),
-  //     ),
-  //   );
-
-  //   _mapController?.animateCamera(
-  //     CameraUpdate.newLatLngBounds(bounds, 80),
-  //   );
-  // }
-
   //----------------------------------Estimate API Call---------------------------------------
 
   bool loading = false;
@@ -277,13 +264,13 @@ class HomeProvider extends ChangeNotifier {
       final response = await homeRepository.totalEstimateRide(
         RideEstimateRequestModel(
           pickupLocation: RideLocation(
-            latitude: 26.9240,
             longitude: 75.8270,
+            latitude: 26.9240,
             address: "Sindhi Camp bus stop , Jaipur ",
           ),
           dropLocation: RideLocation(
-            latitude: 26.9250,
-            longitude: 75.8260,
+            longitude: 75.8270,
+            latitude: 26.9240,
             address: " Malvie Nagar , Sector-5 Jaipur",
           ),
         ),
@@ -303,7 +290,11 @@ class HomeProvider extends ChangeNotifier {
         ..clear()
         ..addAll(response.data!.allVehicleFares);
 
-      return ApiResponse(success: response.success, message: response.message);
+      return ApiResponse(
+        success: response.success,
+        message: response.message,
+        data: response.data,
+      );
     } catch (e) {
       loading = false;
 
@@ -318,7 +309,7 @@ class HomeProvider extends ChangeNotifier {
 
   //--------------------------------------Ride Create --------------------------------
 
-  Future<ApiResponse> createRide(String id) async {
+  Future<ApiResponse<RideCreatedResposeModel>> createRide(String id) async {
     debugPrint(
       "ride id : $id ${position!.latitude}. ....${position!.longitude} $vehicleType. ${selectedPayment.toString().toLowerCase()}",
     );
@@ -328,8 +319,8 @@ class HomeProvider extends ChangeNotifier {
     try {
       final response = await homeRepository.rideCreated(
         RideCreatedRequestModel(
-          pickupLocation: Location(coordinates: [26.9240, 75.8270]),
-          dropLocation: Location(coordinates: [26.9250, 75.8260]),
+          pickupLocation: Location(coordinates: [75.8270, 26.9240]),
+          dropLocation: Location(coordinates: [75.8260, 26.9250]),
           vehicleType: vehicleType,
           paymentMethod: selectedPayment.toString().toLowerCase(),
         ),
@@ -339,10 +330,10 @@ class HomeProvider extends ChangeNotifier {
       loading = false;
 
       debugPrint(
-        "Data : ${response.data} ${response.message} ${response.success}",
+        "Data :... ${response.data!.estimatedTime} ${response.message} ${response.success}",
       );
-
-      return ApiResponse(success: response.success, message: response.message);
+      return response;
+      // return ApiResponse(success: response.success, message: response.message);
     } catch (e) {
       loading = false;
       debugPrint("error : ${e.toString()}");
@@ -524,17 +515,50 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-
-
   //----------------------------------------  Rating -------------------------------------------
 
-  Future<ApiResponse> rating(String rideId , String rating, String feedback) async {
+  Future<ApiResponse> rating(
+    String rideId,
+    String rating,
+    String feedback,
+  ) async {
     loading = true;
     notifyListeners();
 
     debugPrint("ride id : $rideId");
     try {
-      final response = await homeRepository.rating(rideId , rating ,  feedback);
+      final response = await homeRepository.rating(rideId, rating, feedback);
+      loading = false;
+      notifyListeners();
+      return ApiResponse(success: response.success, message: response.message);
+    } catch (e) {
+      loading = false;
+      debugPrint("error : ${e.toString()}");
+      notifyListeners();
+
+      return ApiResponse(
+        success: false,
+        message: "Something went wrong  ${e.toString()}",
+      );
+    }
+  }
+
+  //----------------------------------------  near by driver  -------------------------------------------
+
+  Future<ApiResponse<NearByDriverModel>> nearByAvailbeDrvier() async {
+    loading = true;
+    notifyListeners();
+
+    debugPrint("inside nearby driver : ");
+    try {
+      final response = await homeRepository.nearByVehicle(
+        position?.latitude.toString() ?? "0.0",
+        position?.longitude.toString() ?? "0.0",
+      );
+
+      if (response.success) {
+        debugPrint("response is : ${response.data}");
+      }
       loading = false;
       notifyListeners();
       return ApiResponse(success: response.success, message: response.message);

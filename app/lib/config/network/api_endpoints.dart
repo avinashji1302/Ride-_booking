@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const baseUrl = "http://192.168.2.191:5678";
+  static const baseUrl = "http://192.168.2.58:5678";
   // static const baseUrl = "http://192.168.2.239:5678";
 
   //Auth
@@ -36,9 +36,11 @@ class ApiEndpoints {
   static const duePayment = "$baseUrl/v1/user/ride/paymentDue";
   static const paymentDone = "$baseUrl/v1/user/ride/paidPayment";
 
-  //  http://192.168.2.143:5678/v1/user/updateProfile%27
-  // curl --location 'http://192.168.2.143:5678/v1/user/upload-image' \
-  // --header 'Authorization: Bearer AUTH_BEARER_TOKEN' \
-  // --form 'image=@"/path/to/file"'
-  // curl -s -X POST 'http://localhost:5678/v1/user/rating'
+  static const nearBy = "$baseUrl/v1/user/ride/nearby";
+  static const getOne = "$baseUrl/v1/user/ride/get-one";
+  static const activeRide = "$baseUrl/v1/user/ride/active";
+
+  // {{baseUrl}}/v1/user/ride/nearby?lat&lng
+  //{{baseUrl}}/v1/user/ride/get-one?rideId=ride_id
+  //{{baseUrl}}/v1/user/ride/active
 }

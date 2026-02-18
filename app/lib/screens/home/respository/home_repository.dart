@@ -8,12 +8,41 @@ import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart';
 import 'package:app/screens/home/model/get_due_payment_model.dart';
+import 'package:app/screens/home/model/near_by_driver_model.dart';
 import 'package:app/screens/home/model/ride_create_model/ride_request_model.dart';
 import 'package:app/screens/home/model/ride_create_model/ride_response_model.dart';
 import 'package:app/screens/home/model/ride_scheduled_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeRepository {
+  //-------------------------Near by Vehcile---------------------
+  Future<ApiResponse<NearByDriverModel>> nearByVehicle(
+    String lat,
+    String lng,
+  ) async {
+    final token = await AuthStorage().getAccessToken();
+
+    debugPrint("Debug token::::: : $token");
+
+    final response = await HttpClient.get(
+      "${ApiEndpoints.nearBy}?pickupLat=$lat&pickupLng=$lat",
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    // ?pickupLat=26.924&pickupLng=75.827
+    debugPrint(("near by drivers : ${response.body}"));
+    final json = jsonDecode(response.body);
+
+    return ApiResponse<NearByDriverModel>.fromJson(
+      json,
+      (data) => NearByDriverModel.fromJson(data),
+    );
+  }
+
   //-------------------------Estimate Ride---------------------
   Future<ApiResponse<RideEstimateResultModel>> totalEstimateRide(
     RideEstimateRequestModel request,
@@ -59,7 +88,7 @@ class HomeRepository {
       body: request.toJson(),
     );
 
-    debugPrint(("Ride created: : ${  response.body}"));
+    debugPrint(("Ride created: : ${response.body}"));
 
     final json = jsonDecode(response.body);
 
@@ -123,16 +152,16 @@ class HomeRepository {
     );
   }
 
-   //---------------------------Ride Scheduled-------------------
+  //---------------------------Ride Scheduled-------------------
 
   Future<ApiResponse<RideScheduledModel>> scheduledRide(
     String promCode,
     String vehicleType,
     String paymentMethod,
-    String scheduledTime
+    String scheduledTime,
   ) async {
     final token = await AuthStorage().getAccessToken();
-     final userId = await AuthStorage().getUserId();
+    final userId = await AuthStorage().getUserId();
     debugPrint("promot $promCode $vehicleType $paymentMethod userid : $userId");
     final response = await HttpClient.post(
       "${ApiEndpoints.schedule}/$userId",
@@ -141,14 +170,17 @@ class HomeRepository {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-      body: {"vehicleType": vehicleType, "paymentMethod": paymentMethod, "scheduledFor": scheduledTime ,  "promocode": promCode},
+      body: {
+        "vehicleType": vehicleType,
+        "paymentMethod": paymentMethod,
+        "scheduledFor": scheduledTime,
+        "promocode": promCode,
+      },
     );
 
     debugPrint("Raw apply coupon response : ${response.body}");
 
     final json = jsonDecode(response.body);
-
-    
 
     return ApiResponse<RideScheduledModel>.fromJson(
       json,
@@ -156,15 +188,11 @@ class HomeRepository {
     );
   }
 
-
-
   //---------------------------get due payemnt-------------------
 
-  Future<ApiResponse<GetDuePaymentModel>> getDuePayemnt( String rideId
-  ) async {
+  Future<ApiResponse<GetDuePaymentModel>> getDuePayemnt(String rideId) async {
     final token = await AuthStorage().getAccessToken();
 
-   
     final response = await HttpClient.get(
       "${ApiEndpoints.duePayment}?rideId=$rideId",
       headers: {
@@ -172,14 +200,11 @@ class HomeRepository {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-      
     );
 
     debugPrint("Raw apply coupon response : ${response.body}");
 
     final json = jsonDecode(response.body);
-
-    
 
     return ApiResponse<GetDuePaymentModel>.fromJson(
       json,
@@ -187,13 +212,11 @@ class HomeRepository {
     );
   }
 
-   //--------------------------- payemnt Done -------------------
+  //--------------------------- payemnt Done -------------------
 
-  Future<ApiResponse<void>> paymentDone( String rideId
-  ) async {
+  Future<ApiResponse<void>> paymentDone(String rideId) async {
     final token = await AuthStorage().getAccessToken();
 
-   
     final response = await HttpClient.post(
       ApiEndpoints.paymentDone,
       headers: {
@@ -201,10 +224,8 @@ class HomeRepository {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-    
-      body: {
-        "rideId": rideId
-      }
+
+      body: {"rideId": rideId},
     );
 
     debugPrint("payment done: ${response.body}");
@@ -213,12 +234,14 @@ class HomeRepository {
     return ApiResponse<void>.fromJson(json, (_) => null);
   }
 
-//-----------------------------Rating------------------------------------------
-    Future<ApiResponse<void>> rating( String rideId , String rating , String feedback
+  //-----------------------------Rating------------------------------------------
+  Future<ApiResponse<void>> rating(
+    String rideId,
+    String rating,
+    String feedback,
   ) async {
     final token = await AuthStorage().getAccessToken();
 
-   
     final response = await HttpClient.post(
       ApiEndpoints.rating,
       headers: {
@@ -226,12 +249,8 @@ class HomeRepository {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-    
-      body: {
-        "rideId": rideId,
-        "rating":rating,
-        "message":feedback
-      }
+
+      body: {"rideId": rideId, "rating": rating, "message": feedback},
     );
 
     debugPrint("Rating done: ${response.body}");
@@ -240,5 +259,3 @@ class HomeRepository {
     return ApiResponse<void>.fromJson(json, (_) => null);
   }
 }
-
-

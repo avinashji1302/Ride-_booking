@@ -2,7 +2,9 @@ import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/theme/theme_provider.dart';
+import 'package:app/screens/About/view/about_screen.dart';
 import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
+import 'package:app/screens/history/view/history_screen.dart';
 import 'package:app/screens/home/widgets/confirmed_ride.dart';
 import 'package:app/screens/home/widgets/reached_destination.dart';
 import 'package:app/screens/home/widgets/ride_selection.dart';
@@ -12,6 +14,7 @@ import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/home/widgets/waiting_driver.dart';
 import 'package:app/screens/ola_money/view/ola_money.dart';
 import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
+
 import 'package:app/screens/profile/view/user_profile.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:app/screens/home/widgets/review_screen.dart';
@@ -98,10 +101,6 @@ class _HomePageState extends State<HomePage> {
                         child: ListView(
                           padding: EdgeInsets.zero,
                           children: [
-                            ListTile(
-                              leading: Icon(Icons.home),
-                              title: Text("Home"),
-                            ),
                             
                             ListTile(
                               leading: const Icon(Icons.person),
@@ -117,6 +116,9 @@ class _HomePageState extends State<HomePage> {
                             ),
 
                             ListTile(
+                               onTap: (){
+                                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PaymentHistoryScreen()));
+                              },
                               leading: Icon(Icons.add_location),
                               title: Text("History"),
                             ),
@@ -149,11 +151,17 @@ class _HomePageState extends State<HomePage> {
                                 title: Text("Ola Money"),
                               ),
                             ),
+                            // ListTile(
+                            //   onTap: (){
+                            //        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PaymentHistoryScreen()));
+                            //   },
+                            //   leading: Icon(Icons.currency_exchange_outlined),
+                            //   title: Text("Payments"),
+                            // ),
                             ListTile(
-                              leading: Icon(Icons.currency_exchange_outlined),
-                              title: Text("Payments"),
-                            ),
-                            ListTile(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AboutScreen()));
+                              },
                               leading: Icon(Icons.info),
                               title: Text("About"),
                             ),
@@ -243,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                 polylines: controller.polylines,
                 myLocationEnabled: true,
               ),
-
+          
               Positioned(
                 left: 10,
                 top: 30,
@@ -261,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-
+          
               if ((controller.flow == HomeFlow.accepted && rideId != null) ||
                   controller.flow == HomeFlow.driverArrived && rideId != null)
                 Positioned(
@@ -293,28 +301,29 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-
+          
               if (controller.flow == HomeFlow.searchDestination)
                 SctollableCard(),
-
+          
               if (controller.flow == HomeFlow.selectRide && rideId != null)
+              
                 RideSelectionSheet(id: rideId),
-
+          
               if (controller.flow == HomeFlow.waitingDriver)
                 WaitingForDriverSheet(),
-
+          
               if ((controller.flow == HomeFlow.accepted && rideId != null) ||
                   controller.flow == HomeFlow.driverArrived && rideId != null)
                 ConfirmedRide(
                   confiremRideDetails: controller.confiremRideDetails!,
                   rideId: rideId,
                 ),
-
+          
               if (controller.flow == HomeFlow.rideStarted) RideStartedSheet(),
-
+          
               if (controller.flow == HomeFlow.reachedDestination)
                 ReachedDestination(),
-
+          
               if (controller.flow == HomeFlow.rideCompleted)
                 Positioned(
                   left: 0,
@@ -327,7 +336,7 @@ class _HomePageState extends State<HomePage> {
                     onSubmit: (rideId, rating, feedback) async {
                       debugPrint("⭐ Rating: $rating");
                       debugPrint("📝 Feedback: $feedback");
-
+          
                       // API later
                       controller.goBackToSearch();
                       // controller.
@@ -338,6 +347,8 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
+
+                SizedBox(height: 20,)
             ],
           );
         },

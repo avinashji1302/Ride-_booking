@@ -31,7 +31,7 @@ class RideLocation {
   Map<String, dynamic> toJson() {
     return {
       "type": "Point",
-      "coordinates": [longitude, latitude],
+      "coordinates": [ longitude , latitude],
       "address": address,
     };
   }
