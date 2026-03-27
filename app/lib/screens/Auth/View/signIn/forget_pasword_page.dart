@@ -1,6 +1,5 @@
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/screens/Auth/View/signIn/varify_email_phone_page.dart';
-import 'package:app/screens/Auth/View/signIn/set_password_page.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPaswordPage extends StatelessWidget {

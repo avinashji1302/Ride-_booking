@@ -1,6 +1,8 @@
+import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/status_common_dailog.dart';
 import 'package:app/config/helper/widgets/cylinder_line.dart';
+
 import 'package:app/screens/chat/view/chat_screen.dart';
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
@@ -30,7 +32,7 @@ class ConfirmedRide extends StatelessWidget {
           });
         }
         return DraggableScrollableSheet(
-          initialChildSize: 0.40,
+          initialChildSize: 0.50,
           minChildSize: 0.35,
           maxChildSize: .8,
           builder: (context, scrollController) {
@@ -105,14 +107,18 @@ class ConfirmedRide extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Row(
-                                children:  [
+                                children: [
                                   Icon(
                                     Icons.star,
                                     size: 14,
                                     color: AppColor.primaryYellow,
                                   ),
                                   SizedBox(width: 4),
-                                  Text(confiremRideDetails.driver.rating.toString(), style: TextStyle(fontSize: 13)),
+                                  Text(
+                                    confiremRideDetails.driver.rating
+                                        .toString(),
+                                    style: TextStyle(fontSize: 13),
+                                  ),
                                   SizedBox(width: 8),
                                   Text(
                                     "• 800m (3min away)",
@@ -183,11 +189,35 @@ class ConfirmedRide extends StatelessWidget {
 
                     Row(
                       children: [
-                        _roundIcon(Icons.call),
+                        GestureDetector(
+                          onTap: () {
+                            /// START CALL
+                            SocketService().startAudioCall(rideId);
+
+                            /// 👉 SHOW CALLING UI
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (_) => CallingScreen(rideId: rideId),
+                          //     ),
+                          //   );
+                          },
+                          child: _roundIcon(Icons.call),
+                        ),
                         const SizedBox(width: 12),
-                        GestureDetector(onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ChatScreen()));
-                        },child: _roundIcon(Icons.message)),
+                        GestureDetector(
+                          onTap: () {
+                            controller.joinRoom(rideId);
+
+                            // controller.sendMessages(rideId, "Joined");
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ChatScreen(rideId: rideId),
+                              ),
+                            );
+                          },
+                          child: _roundIcon(Icons.message),
+                        ),
                         Spacer(),
 
                         Card(
@@ -352,9 +382,6 @@ void showCancelRideDialog(
     },
   );
 }
-
-
-
 
 void showDriverArrivedSheet(BuildContext context) {
   showCommonStatusDialog(

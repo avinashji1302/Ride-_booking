@@ -6,18 +6,19 @@ import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.d
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
+import 'package:app/screens/audio/viewmodel/audiocall_provider.dart';
+import 'package:app/screens/chat/viewModel/chat_provider.dart';
 import 'package:app/screens/home/view/home_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
 
   runApp(const MyApp());
 }
@@ -39,13 +40,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => OlaMoneyProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // ChangeNotifierProvider(create: (_) => ChatProvider.instance),
+        ChangeNotifierProvider.value(value: ChatProvider.instance),
+                ChangeNotifierProvider(create: (_) => AudioCallProvider()),
 
+// 
         // ✅ Don't initialize ResetPasswordProvider here - it needs parameters
         // ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp(
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'Your App',
 
@@ -59,7 +65,6 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.isDarkMode
                 ? ThemeMode.dark
                 : ThemeMode.light,
-              
 
             home: const AuthCheck(),
           );

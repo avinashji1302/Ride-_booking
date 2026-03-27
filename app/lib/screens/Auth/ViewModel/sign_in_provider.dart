@@ -13,7 +13,7 @@ class SignInProvider extends ChangeNotifier {
     text: "avinash@gmail.com",
   );
   final TextEditingController passController = TextEditingController(
-    text: "avinash",
+    text: "password123456",
   );
 
    final TextEditingController phoneController = TextEditingController(

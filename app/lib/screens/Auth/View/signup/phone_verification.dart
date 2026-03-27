@@ -1,9 +1,5 @@
 import 'package:app/config/colors/app_color.dart';
-import 'package:app/config/device/device_details.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
-import 'package:app/config/validars/validators.dart';
-import 'package:app/screens/Auth/View/signIn/set_password_page.dart';
-import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/home/view/home_page.dart';
@@ -140,6 +136,7 @@ Widget otpBox() {
     height: 40,
     width: 40,
     child: TextField(
+      maxLength: 1,
       keyboardType: TextInputType.numberWithOptions(),
       decoration: InputDecoration(border: OutlineInputBorder()),
     ),

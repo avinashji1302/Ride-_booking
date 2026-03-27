@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/device/location_permission.dart';
 import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart' hide Location;
-import 'package:app/screens/home/model/estimate_response_model.dart/vehicle_fare_model.dart';
 import 'package:app/screens/home/model/get_due_payment_model.dart';
 import 'package:app/screens/home/model/near_by_driver_model.dart' hide Location;
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
@@ -111,6 +111,16 @@ class HomeProvider extends ChangeNotifier {
   void updatePaymeentmode(String value) {
     selectedPayment = value;
     notifyListeners();
+  }
+
+  void joinRoom(String rideId){
+    debugPrint("join rooom");
+      SocketService().joinRoom(rideId);
+  }
+
+    void sendMessages(String rideId , String message){
+    debugPrint("join rooom");
+      SocketService().sendMessage(rideId , message);
   }
 
   //  void rideCompleted() {

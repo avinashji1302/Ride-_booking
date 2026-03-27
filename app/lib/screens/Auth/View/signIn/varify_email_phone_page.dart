@@ -24,89 +24,91 @@ class VarifyEmailPhonePage extends StatelessWidget {
         foregroundColor: Colors.black,
         leading: const BackButton(),
       ),
-      body: Consumer<ForgetPasswordProvider>(
-        builder:
-            (
-              BuildContext context,
-              ForgetPasswordProvider controller,
-              Widget? child,
-            ) {
-              return Padding(
-                padding: EdgeInsetsGeometry.all(16),
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      "Varify the email or phone number",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    InputFieldWidget(
-                      controller: controller.emailController,
-                      hint: "Email",
-                      validator: Validators.validateEmail,
-                      keyboardType: TextInputType.emailAddress,
-
-                      prefixIcon: const Icon(Icons.email),
-                    ),
-
-                    Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                        backgroundColor: AppColor.primaryYellow,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+      body: SafeArea(
+        child: Consumer<ForgetPasswordProvider>(
+          builder:
+              (
+                BuildContext context,
+                ForgetPasswordProvider controller,
+                Widget? child,
+              ) {
+                return Padding(
+                  padding: EdgeInsetsGeometry.all(16),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        "Varify the email or phone number",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      onPressed: () async {
-                        final result = await controller.forgetPassword();
-
-                        if (result.success) {
-                          AppSnackBar.show(
-                            context,
-                            message: result.message,
-                            backgroundColor: Colors.green,
-                          );
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const OtpPageVarififcation(),
-                            ),
-                          );
-                        } else {
-                          AppSnackBar.show(
-                            context,
-                            message: result.message,
-                            backgroundColor: Colors.red,
-                          );
-                        }
-                      },
-
-                       child: controller.loading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            :  Text(
-                        "Send OTP",
-                        style: TextStyle(color: Colors.white),
+                      SizedBox(height: 10),
+                      InputFieldWidget(
+                        controller: controller.emailController,
+                        hint: "Email",
+                        validator: Validators.validateEmail,
+                        keyboardType: TextInputType.emailAddress,
+        
+                        prefixIcon: const Icon(Icons.email),
                       ),
-                    ),
-
-                    SizedBox(height: 10),
-                  ],
-                ),
-              );
-            },
+        
+                      Spacer(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(double.infinity, 50),
+                          backgroundColor: AppColor.primaryYellow,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final result = await controller.forgetPassword();
+        
+                          if (result.success) {
+                            AppSnackBar.show(
+                              context,
+                              message: result.message,
+                              backgroundColor: Colors.green,
+                            );
+        
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const OtpPageVarififcation(),
+                              ),
+                            );
+                          } else {
+                            AppSnackBar.show(
+                              context,
+                              message: result.message,
+                              backgroundColor: Colors.red,
+                            );
+                          }
+                        },
+        
+                         child: controller.loading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              :  Text(
+                          "Send OTP",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+        
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                );
+              },
+        ),
       ),
     );
   }

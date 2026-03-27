@@ -1,6 +1,6 @@
 class ApiEndpoints {
-  static const baseUrl = "http://192.168.2.58:5678";
-  // static const baseUrl = "http://192.168.2.239:5678";
+  static const baseUrl = "http://192.168.2.67:5678";//server 
+  // static const baseUrl = "http://192.168.2.65:5678";//local 
 
   //Auth
   static const register = "$baseUrl/v1/user/register";
