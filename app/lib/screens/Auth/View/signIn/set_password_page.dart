@@ -1,6 +1,7 @@
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
+import 'package:app/screens/Auth/View/signIn/sign_in_page.dart';
 
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/reset_password_provider.dart';
@@ -12,7 +13,6 @@ import 'package:provider/provider.dart';
 class SetPasswordPage extends StatelessWidget {
   SetPasswordPage({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final forgetProvider = context.read<ForgetPasswordProvider>();
@@ -20,6 +20,11 @@ class SetPasswordPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text(
+          "Set Password",
+          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
@@ -39,13 +44,6 @@ class SetPasswordPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Set Password",
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       const SizedBox(height: 20),
                       const Text(
                         "Set Your Password",
@@ -90,7 +88,9 @@ class SetPasswordPage extends StatelessWidget {
                               email,
                             );
 
-                            debugPrint("Sucesss: ${result.message} ${result.data} ${result.success}");
+                            debugPrint(
+                              "Sucesss: ${result.message} ${result.data} ${result.success}",
+                            );
 
                             if (result.success) {
                               AppSnackBar.show(
@@ -100,9 +100,7 @@ class SetPasswordPage extends StatelessWidget {
                               );
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => HomePage(),
-                                ),
+                                MaterialPageRoute(builder: (_) => SignInPage()),
                               );
                             } else {
                               AppSnackBar.show(
@@ -113,22 +111,21 @@ class SetPasswordPage extends StatelessWidget {
                             }
                           },
                           child: resetController.loading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                   color: Colors.grey,
+                                  ),
+                                )
+                              : const Text(
+                                  "New Passowrd",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColor.white,
+                                  ),
                                 ),
-                              )
-                            :  const Text(
-                            "New Passowrd",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.black,
-                            ),
-                          ),
                         ),
                       ),
 

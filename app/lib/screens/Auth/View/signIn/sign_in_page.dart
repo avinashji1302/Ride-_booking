@@ -1,12 +1,14 @@
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
+import 'package:app/screens/Auth/View/signIn/login_with_otp.dart';
 import 'package:app/screens/Auth/View/signIn/varify_email_phone_page.dart';
 import 'package:app/screens/Auth/View/signup/signup_page.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:app/screens/Auth/widgets/social_widget.dart';
-import 'package:app/screens/home/view/home_page.dart';
+
+import 'package:app/screens/landingPage/view/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -43,23 +45,23 @@ class SignInPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                    
+
                         const SizedBox(height: 24),
-                    
+
                         !isPhone!
                             ? InputFieldWidget(
                                 controller: controller.emailController,
                                 hint: "Email",
                                 validator: Validators.validateEmail,
                                 keyboardType: TextInputType.emailAddress,
-                    
+
                                 prefixIcon: const Icon(Icons.email),
                               )
                             : InputFieldWidget(
                                 controller: controller.phoneController,
                                 hint: "Phone",
                                 validator: Validators.validatePhone,
-                                keyboardType: TextInputType.phone,
+                                keyboardType: TextInputType.numberWithOptions(),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -67,32 +69,57 @@ class SignInPage extends StatelessWidget {
                                 prefixIcon: const Icon(Icons.phone),
                               ),
                         SizedBox(height: 10),
-                        InputFieldWidget(
-                          controller: controller.passController,
-                          hint: "Password",
-                          isPassword: true,
-                          validator: Validators.validatePassword,
-                          prefixIcon: const Icon(Icons.lock_outline),
-                        ),
+                        !isPhone!
+                            ? InputFieldWidget(
+                                controller: controller.passController,
+                                hint: "Password",
+                                isPassword: true,
+                                validator: Validators.validatePassword,
+                                prefixIcon: const Icon(Icons.lock_outline),
+                              )
+                            : SizedBox.shrink(),
                         const SizedBox(height: 8),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VarifyEmailPhonePage(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        VarifyEmailPhonePage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Forget Password",
+                                style: TextStyle(color: Colors.red),
+                                textDirection: TextDirection.rtl,
                               ),
-                            );
-                          },
-                          child: Text(
-                            "Forget Password",
-                            style: TextStyle(color: Colors.red),
-                            textDirection: TextDirection.rtl,
-                          ),
+                            ),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        LoginWithOtp(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Login Via Otp",
+                                style: TextStyle(color: Colors.green),
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ),
+                          ],
                         ),
-                    
+
                         const SizedBox(height: 20),
-                    
+
                         /// Sign in button
                         SizedBox(
                           width: double.infinity,
@@ -104,92 +131,96 @@ class SignInPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed:
-                             
-                            
-                          controller.loading
-                              ? null
-                              : () async {
-                                  if (!controller.formKey.currentState!
-                                      .validate()) {
-                                    AppSnackBar.show(
+                            onPressed: controller.loading
+                                ? null
+                                : () async {
+                                    if (!controller.formKey.currentState!
+                                        .validate()) {
+                                      AppSnackBar.show(
+                                        context,
+                                        message:
+                                            "Please fix the errors in the form",
+                                        backgroundColor: Colors.red,
+                                      );
+                                      return;
+                                    }
+                                    final result = await controller.signIn(
                                       context,
-                                      message:
-                                          "Please fix the errors in the form",
-                                      backgroundColor: Colors.red,
+                                      isPhone!,
                                     );
-                                    return;
-                                  }
-                              final result = await controller.signIn(context , isPhone!);
-                    
-                              debugPrint("result : ${result.data}");
-                    
-                              if (result.success) {
-                                AppSnackBar.show(
-                                  context,
-                                  message: result.message,
-                                  backgroundColor: Colors.green,
-                                );
-                    
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => HomePage()),
-                                );
-                               
-                              } else {
-                                AppSnackBar.show(
-                                  context,
-                                  message: result.message,
-                                  backgroundColor: Colors.red,
-                                );
-                              }
-                            },
-                    
+
+                                    debugPrint("result : ${result.data}");
+
+                                    if (result.success) {
+                                      AppSnackBar.show(
+                                        context,
+                                        message: result.message,
+                                        backgroundColor: Colors.green,
+                                      );
+
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => LandingPage(),
+                                        ),
+                                      );
+                                    } else {
+                                      AppSnackBar.show(
+                                        context,
+                                        message: result.message,
+                                        backgroundColor: Colors.red,
+                                      );
+                                    }
+                                  },
+
                             child: controller.loading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                     color: Colors.grey,
+                                    ),
+                                  )
+                                : const Text(
+                                    "Sign in",
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                )
-                              :    const Text(
-                              "Sign in",
-                              style: TextStyle(color: Colors.white),
-                            ),
                           ),
                         ),
-                    
+
                         const SizedBox(height: 20),
-                    
+
                         Row(
                           children: [
-                            Expanded(child: Divider(color: Colors.grey.shade300)),
+                            Expanded(
+                              child: Divider(color: Colors.grey.shade300),
+                            ),
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Text("or"),
                             ),
-                            Expanded(child: Divider(color: Colors.grey.shade300)),
+                            Expanded(
+                              child: Divider(color: Colors.grey.shade300),
+                            ),
                           ],
                         ),
-                    
+
                         const SizedBox(height: 20),
-                    
+
                         /// Social buttons
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            SocialButton(icon: Icons.mail),
+                            SocialButton(icon: Icons.cloud),
                             SizedBox(width: 15),
                             SocialButton(icon: Icons.facebook),
                             SizedBox(width: 15),
                             SocialButton(icon: Icons.apple),
                           ],
                         ),
-                    
+
                         const SizedBox(height: 20),
-                    
+
                         /// Footer
                         Center(
                           child: GestureDetector(

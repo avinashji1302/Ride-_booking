@@ -6,8 +6,11 @@ import 'package:app/screens/Auth/View/signup/phone_verification.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:app/screens/Auth/widgets/social_widget.dart';
+import 'package:app/screens/home/view/home_page.dart';
+import 'package:app/screens/landingPage/view/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -211,12 +214,84 @@ class SignUpScreen extends StatelessWidget {
                     /// Social buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        SocialButton(icon: Icons.mail),
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            final result = await provider.signUpWithGoogle(
+                              'android',
+                              'google',
+                            );
+
+                            if (result.success) {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.green,
+                              );
+
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LandingPage(),
+                                ),
+                                (_) => false,
+                              );
+                            } else {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.red,
+                              );
+                            }
+                          },
+                          child: FaIcon(
+                            FontAwesomeIcons.squareGooglePlus,
+                            size: 40,
+                            color: Colors.red,
+                          ),
+                        ),
                         SizedBox(width: 15),
-                        SocialButton(icon: Icons.facebook),
+                        GestureDetector(
+                          onTap: () async {
+                            final result = await provider.signUpWithFacebook(
+                              'android',
+                              'facebook',
+                            );
+
+                            if (result.success) {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.green,
+                              );
+
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LandingPage(),
+                                ),
+                                (_) => false,
+                              );
+                            } else {
+                              AppSnackBar.show(
+                                context,
+                                message: result.message,
+                                backgroundColor: Colors.red,
+                              );
+                            }
+                          },
+                          child: FaIcon(
+                            FontAwesomeIcons.facebook,
+                            size: 40,
+                            color: Colors.red,
+                          ),
+                        ),
                         SizedBox(width: 15),
-                        SocialButton(icon: Icons.apple),
+                        FaIcon(
+                          FontAwesomeIcons.apple,
+                          size: 40,
+                          color: Colors.red,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),

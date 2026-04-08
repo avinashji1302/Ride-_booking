@@ -2,7 +2,7 @@ import 'package:app/config/colors/app_color.dart';
 import 'package:flutter/material.dart';
 
 class PaymentHistoryScreen extends StatelessWidget {
-  PaymentHistoryScreen({super.key});
+  const PaymentHistoryScreen({super.key});
 
   /// Static dummy data
   static const List<Map<String, dynamic>> payments = [
@@ -41,7 +41,7 @@ class PaymentHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ride History")),
+      appBar: AppBar(title: const Text("Ride History...")),
       body: ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: payments.length,

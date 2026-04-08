@@ -24,18 +24,22 @@ class ConfirmedRide extends StatelessWidget {
       builder: (BuildContext context, HomeProvider controller, Widget? child) {
         if (controller.flow == HomeFlow.driverArrived &&
             !controller.driverArrivedPopupShown) {
-          debugPrint("inside..........");
+          debugPrint("inside.......... ${confiremRideDetails.driver.rating}");
           controller.driverArrivedPopupShown = true;
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showDriverArrivedSheet(context);
           });
+
+              debugPrint("inside.......... ${confiremRideDetails.driver.rating}");
         }
         return DraggableScrollableSheet(
           initialChildSize: 0.50,
           minChildSize: 0.35,
           maxChildSize: .8,
           builder: (context, scrollController) {
+
+             debugPrint("inside.......... ${confiremRideDetails.driver.rating}");
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: const BoxDecoration(
@@ -106,6 +110,7 @@ class ConfirmedRide extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
+                              if(!(controller.flow == HomeFlow.driverArrived))
                               Row(
                                 children: [
                                   Icon(
@@ -194,13 +199,6 @@ class ConfirmedRide extends StatelessWidget {
                             /// START CALL
                             SocketService().startAudioCall(rideId);
 
-                            /// 👉 SHOW CALLING UI
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (_) => CallingScreen(rideId: rideId),
-                          //     ),
-                          //   );
                           },
                           child: _roundIcon(Icons.call),
                         ),

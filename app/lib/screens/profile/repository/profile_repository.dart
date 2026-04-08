@@ -31,6 +31,9 @@ class ProfileRepository {
     return ApiResponse<void>.fromJson(json, (_) {});
   }
 
+
+  //-------------------------------Get Profile---------------------
+
   Future<ApiResponse<UserProfileModle>> profile() async {
     final token = await AuthStorage().getAccessToken();
 
@@ -45,7 +48,7 @@ class ProfileRepository {
       },
     );
 
-    debugPrint("raw response : ${response.body}");
+    debugPrint("raw response :.................... ${response.body}");
 
     final json = jsonDecode(response.body);
     return ApiResponse<UserProfileModle>.fromJson(

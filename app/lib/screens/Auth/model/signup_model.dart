@@ -28,21 +28,21 @@ class SignupModel {
 
 // ---------------- RESPONSE ----------------
 
-class SignUpResponse {
-  final bool success;
-  final String message;
-  final UserModel user;
+// class SignUpResponse {
+//   final bool success;
+//   final String message;
+//   final UserModel user;
   
 
-  SignUpResponse({
-    required this.success,
-    required this.message, required this.user,
-  });
+//   SignUpResponse({
+//     required this.success,
+//     required this.message, required this.user,
+//   });
 
-  factory SignUpResponse.fromJson(Map<String, dynamic> json) {
-    return SignUpResponse(
-      success: json["success"],
-      message: json["message"], user: UserModel.fromJson(json["results"]),
-    );
-  }
-}
+//   factory SignUpResponse.fromJson(Map<String, dynamic> json) {
+//     return SignUpResponse(
+//       success: json["success"],
+//       message: json["message"], user: UserModel.fromJson(json["results"]),
+//     );
+//   }
+// }

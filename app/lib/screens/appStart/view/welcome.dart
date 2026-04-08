@@ -81,7 +81,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   child: const Text(
-                    "Log in with email",
+                    "Login",
                     style: TextStyle(
                       fontSize: 16,
                       color: AppColor.primaryYellow,
@@ -91,34 +91,34 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
           
-              /// Login Button with phone
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColor.primaryYellow),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignInPage(isPhone: true),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Log in with phone",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColor.primaryYellow,
-                    ),
-                  ),
-                ),
-              ),
+              // /// Login Button with phone
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 50,
+              //   child: OutlinedButton(
+              //     style: OutlinedButton.styleFrom(
+              //       side: const BorderSide(color: AppColor.primaryYellow),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => SignInPage(isPhone: true),
+              //         ),
+              //       );
+              //     },
+              //     child: const Text(
+              //       "Log in with phone",
+              //       style: TextStyle(
+              //         fontSize: 16,
+              //         color: AppColor.primaryYellow,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

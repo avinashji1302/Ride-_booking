@@ -18,79 +18,81 @@ class ProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = context.watch<ProfileProvider>();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        cylinderLine(),
-        SizedBox(height: 10),
-
-        /// Title
-        Center(
-          child: const Text(
-            "Profile",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Divider(),
-        const SizedBox(height: 16),
-
-        /// User icon + name
-        Row(
-          children: [
-            const CircleAvatar(
-              radius: 30,
-
-              backgroundColor: AppColor.primaryYellow,
-              child: Icon(Icons.person, color: Colors.black, size: 30),
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          cylinderLine(),
+          SizedBox(height: 10),
+      
+          /// Title
+          Center(
+            child: const Text(
+              "Profile",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-
-            const SizedBox(width: 12),
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-                Text(
-                  data.userDetails?.fullName??"Name not found",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: 4),
-                Text("ID: ${data.userDetails?.id}", style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 20),
-
-        const Divider(),
-
-        /// Phone
-        _infoTile(icon: Icons.phone, title: "Phone", value: data.userDetails?.mobile??"63889878767"),
-
-        /// Email
-        _infoTile(icon: Icons.email, title: "Email",value: data.userDetails?.email??"avi@gmail.com"),
-
-        /// Member since
-        _infoTile(
-          icon: Icons.calendar_today,
-          title: "Member Since",
-          value: memberSince,
-        ),
-
-        const SizedBox(height: 20),
-
-        /// Logout button
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Close"),
           ),
-        ),
-      ],
+          Divider(),
+          const SizedBox(height: 16),
+      
+          /// User icon + name
+          Row(
+            children: [
+              const CircleAvatar(
+                radius: 30,
+      
+                backgroundColor: AppColor.primaryYellow,
+                child: Icon(Icons.person, color: Colors.black, size: 30),
+              ),
+      
+              const SizedBox(width: 12),
+      
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:  [
+                  Text(
+                    data.userDetails?.fullName??"Name not found",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(height: 4),
+                  Text("ID: ${data.userDetails?.id}", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ],
+          ),
+      
+          const SizedBox(height: 20),
+      
+          const Divider(),
+      
+          /// Phone
+          _infoTile(icon: Icons.phone, title: "Phone", value: data.userDetails?.mobile??"63889878767"),
+      
+          /// Email
+          _infoTile(icon: Icons.email, title: "Email",value: data.userDetails?.email??"avi@gmail.com"),
+      
+          /// Member since
+          _infoTile(
+            icon: Icons.calendar_today,
+            title: "Member Since",
+            value: memberSince,
+          ),
+      
+          const SizedBox(height: 20),
+      
+          /// Logout button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Close"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

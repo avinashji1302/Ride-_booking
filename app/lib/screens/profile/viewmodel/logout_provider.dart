@@ -70,7 +70,9 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       if (response.data != null) {
+      
         _userDetails = response.data;
+          debugPrint("userdeatils : ${userDetails!.wallet}"); 
       }
       return ApiResponse(success: response.success, message: response.message);
     } catch (e) {
@@ -112,12 +114,12 @@ class ProfileProvider extends ChangeNotifier {
       final response = await repository.uploadProfileImage(imageFile);
 
       debugPrint("result : $response");
-
+ debugPrint("profilePic is : ${response.data}");
       if (response != null) {
         profilePic = response.data!;
       }
 
-      debugPrint("Data is : ${response}");
+      debugPrint("profilePic is : ${profilePic}");
 
       isLoading = false;
       notifyListeners();
@@ -140,7 +142,7 @@ class ProfileProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    debugPrint("data is : $updatedName $profilePic");
+    debugPrint("data is :  $profilePic");
 
     try {
       final response = await repository.updateProfile(

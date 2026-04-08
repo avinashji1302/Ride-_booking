@@ -43,6 +43,19 @@ class HttpClient {
     );
   }
 
+  // DELETE METHOD
+static Future<http.Response> delete(
+  String url, {
+  Map<String, String>? headers,
+  Object? body,
+}) async {
+  return await http.delete(
+    Uri.parse(url),
+    headers: headers ?? {"Content-Type": "application/json"},
+    body: body != null ? jsonEncode(body) : null,
+  );
+}
+
 
   // 🔥 MULTIPART (IMAGE UPLOAD)
 // In your HttpClient.multipart method:

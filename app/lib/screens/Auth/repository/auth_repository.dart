@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/Auth/model/forget_passowrd_model.dart';
+import 'package:app/screens/Auth/model/login_with_otp_model.dart';
 import 'package:app/screens/Auth/model/otp_varify_model.dart';
 import 'package:app/screens/Auth/model/reset_password_model.dart';
 import 'package:app/screens/Auth/model/signin_model.dart';
+import 'package:app/screens/Auth/model/social_registet_response_model.dart';
 import 'package:app/screens/Auth/model/user_model.dart';
 import 'package:app/screens/Auth/model/varifty_user_forget_password_model.dart';
 import 'package:flutter/material.dart';
@@ -41,30 +42,26 @@ class AuthRepository {
   //   if (response.statusCode == 200 || response.statusCode == 201) {
   //     debugPrint("Sign up model: ${response.body.isEmpty}");
 
-
-     
   //     return SignUpResponse.fromJson(jsonDecode(response.body));
   //   } else {
   //     throw Exception("Registration failed");
   //   }
   // }
-Future<ApiResponse<UserModel>> register(
-  SignupModel request,
-) async {
-  final response = await HttpClient.post(
-    ApiEndpoints.register,
-    body: request.toJson(),
-  );
+  Future<ApiResponse<UserModel>> register(SignupModel request) async {
+    final response = await HttpClient.post(
+      ApiEndpoints.register,
+      body: request.toJson(),
+    );
 
-  final json = jsonDecode(response.body);
+    final json = jsonDecode(response.body);
 
-  debugPrint("response raw: ${json}");
+    debugPrint("response raw: $json");
 
-  return ApiResponse<UserModel>.fromJson(
-    json,
-    (data) => UserModel.fromJson(data),
-  );
-}
+    return ApiResponse<UserModel>.fromJson(
+      json,
+      (data) => UserModel.fromJson(data),
+    );
+  }
 
   //-----------------------------OTP Varify--------------------------------------
 
@@ -132,17 +129,12 @@ Future<ApiResponse<UserModel>> register(
 
     debugPrint("respons e: $response");
     final json = jsonDecode(response.body);
-    return ApiResponse<void>.fromJson(
-      json,
-      (_) {},
-    );
+    return ApiResponse<void>.fromJson(json, (_) {});
   }
 
-    //------------------------------Varify Forget Password-------------------
+  //------------------------------Varify Forget Password-------------------
 
-  Future<ApiResponse<void>> resetPassword(
-    ResetPasswordModel request,
-  ) async {
+  Future<ApiResponse<void>> resetPassword(ResetPasswordModel request) async {
     final response = await HttpClient.post(
       ApiEndpoints.resetPassword,
       body: request.toJson(),
@@ -150,9 +142,104 @@ Future<ApiResponse<UserModel>> register(
 
     debugPrint("respons e: $response");
     final json = jsonDecode(response.body);
-    return ApiResponse<void>.fromJson(
+    return ApiResponse<void>.fromJson(json, (_) {});
+  }
+
+  //----------------------------------Social SignUp-------------------------------------
+
+  Future<ApiResponse<SocialRegistetResponseModel>> socialRegister(
+    Map<String, dynamic> body,
+  ) async {
+    final response = await HttpClient.post(
+      ApiEndpoints.socialSignUp,
+      body: body,
+    );
+
+    debugPrint("social Response e: $response");
+    final json = jsonDecode(response.body);
+
+    debugPrint("Soemtethign wnet : ${response.body}");
+
+    return ApiResponse<SocialRegistetResponseModel>.fromJson(
       json,
-      (_) {},
+      (data) => SocialRegistetResponseModel.fromJson(data),
     );
   }
+
+  //---------------------------------------Signin with OTP---------------------------
+
+  Future<ApiResponse<LoginWithOtpModel>> loginWithOtp(
+    Map<String, dynamic> body,
+    bool isPhone,
+  ) async {
+    debugPrint("body : $body $isPhone");
+    final loginUrl = isPhone
+        ? ApiEndpoints.sendLoginOtp
+        : ApiEndpoints.sendEmailLoginOtp;
+
+    final response = await HttpClient.post(loginUrl, body: body);
+    debugPrint("raw login data : ${response.body} $response");
+    final json = jsonDecode(response.body);
+
+    debugPrint("raw login data : $json");
+
+    return ApiResponse<LoginWithOtpModel>.fromJson(
+      json,
+      (data) => LoginWithOtpModel.fromJson(data),
+    );
+  }
+
+
+  //------------------------------------Varif SignUp with Otp------------------------------
+
+    Future<ApiResponse<SignInResponse>> varifyLoginWithOtp(
+    Map<String, dynamic> body,
+    bool isPhone,
+  ) async {
+    debugPrint("body : $body $isPhone");
+    final varifyLoginOtp = isPhone
+        ? ApiEndpoints.verifyLoginOtp
+        : ApiEndpoints.verifyEmailLoginOtp;
+
+    final response = await HttpClient.post(varifyLoginOtp, body: body);
+    debugPrint("raw login data : ${response.body} $response");
+    final json = jsonDecode(response.body);
+
+    debugPrint("raw varify login data : $json");
+
+    return ApiResponse<SignInResponse>.fromJson(
+      json,
+      (data) => SignInResponse.fromJson(data),
+    );
+  }
+
+
+  //--------------------------------------Resend the OTP-------------------------------------------
+
+
+ 
+
+  Future<ApiResponse<LoginWithOtpModel>> resendOtp(
+    Map<String, dynamic> body,
+    bool isPhone,
+  ) async {
+    debugPrint("body : $body $isPhone");
+    final loginUrl = isPhone
+        ? ApiEndpoints.resendOTPMobile
+        : ApiEndpoints.resendEmailLoginOtp;
+
+    final response = await HttpClient.post(loginUrl, body: body);
+    debugPrint("raw login data : ${response.body} $response");
+    final json = jsonDecode(response.body);
+
+    debugPrint("raw login data : $json");
+
+    return ApiResponse<LoginWithOtpModel>.fromJson(
+      json,
+      (data) => LoginWithOtpModel.fromJson(data),
+    );
+  }
+  
+// }
+ 
 }

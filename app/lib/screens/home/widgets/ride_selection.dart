@@ -7,6 +7,7 @@ import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/home/widgets/myself.dart';
 import 'package:app/screens/home/widgets/payment_mode.dart';
+import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +18,10 @@ class RideSelectionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.read<ProfileProvider>();
     return Consumer<HomeProvider>(
-     
       builder: (context, homeProvider, _) {
-
-         debugPrint("debug : $id");
+        debugPrint("debug : $id");
         return Positioned(
           left: 0,
           right: 0,
@@ -41,7 +41,7 @@ class RideSelectionSheet extends StatelessWidget {
                     /// ───── PICKUP (FIXED)
                     LocationTextField(
                       icon: Icons.my_location,
-                       iconColor: AppColor.primaryYellow,
+                      iconColor: AppColor.primaryYellow,
                       hint: "Current Location",
                       value: homeProvider
                           .allEstimatedResult!
@@ -78,11 +78,21 @@ class RideSelectionSheet extends StatelessWidget {
                           final originalFare = (data.estimatedFare);
 
                           final discountedFare = homeProvider.getDiscountedFare(
-                           double.tryParse(originalFare) ?? 0.0,
+                            double.tryParse(originalFare) ?? 0.0,
                           );
 
                           final bool isSelected =
                               homeProvider.vehicleType == data.vehicleType;
+
+                          if (isSelected) {
+                            homeProvider.selectedVehiclePrice = double.parse(
+                              originalFare,
+                            );
+
+                            debugPrint(
+                              "selcted : ${homeProvider.selectedVehiclePrice} $originalFare",
+                            );
+                          }
 
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
@@ -91,7 +101,7 @@ class RideSelectionSheet extends StatelessWidget {
                               horizontal: 12,
                               vertical: 5,
                             ),
-                            height:  50, // 👈 height highlight
+                            height: 50, // 👈 height highlight
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? AppColor.primaryYellow.withOpacity(0.12)
@@ -140,7 +150,7 @@ class RideSelectionSheet extends StatelessWidget {
                                     children: [
                                       if (homeProvider.isCouponApplied)
                                         Text(
-                                          "₹${originalFare}",
+                                          "₹$originalFare",
                                           style: const TextStyle(
                                             fontSize: 11,
                                             color: Colors.grey,
@@ -168,7 +178,6 @@ class RideSelectionSheet extends StatelessWidget {
                       ),
                     ),
 
-                    /// ───── BOOK BUTTON (FIXED)
                     ///
                     SizedBox(
                       width: double.infinity,
@@ -193,6 +202,25 @@ class RideSelectionSheet extends StatelessWidget {
                                           context,
                                           child: PaymentMode(
                                             onSubmit: (value) {
+                                              debugPrint(
+                                                "Wallet type $value ${homeProvider.selectedVehiclePrice} ${profile.userDetails?.wallet}",
+                                              );
+
+                                              if (value == "Wallet" &&
+                                                  (profile
+                                                              .userDetails
+                                                              ?.wallet ??
+                                                          0.0) <
+                                                      homeProvider
+                                                          .selectedVehiclePrice) {
+                                                AppSnackBar.show(
+                                                  context,
+                                                  message:
+                                                      "You do not have enough balance...,  Please recharge",
+                                                );
+                                                return;
+                                              }
+
                                               homeProvider.updatePaymeentmode(
                                                 value,
                                               );
@@ -264,15 +292,17 @@ class RideSelectionSheet extends StatelessWidget {
 
                                       AppSnackBar.show(
                                         context,
-                                        message: "Coupon Applied",
+                                        message: result.message,
                                       );
 
-                                      // homeProvider.applyCouponToFare(fare: fare, discountPercent:homeProvider.coupnResponse!.discount!.discountValue, couponCode: couponCode)
                                     } else {
-                                      debugPrint(result.message);
+                                      AppSnackBar.show(
+                                        context,
+                                        message: result.message,
+                                      );
                                     }
                                   },
-                                  child:  !homeProvider.isCouponApplied
+                                  child: !homeProvider.isCouponApplied
                                       ? Row(
                                           children: [
                                             Icon(Icons.local_offer),
@@ -318,11 +348,9 @@ class RideSelectionSheet extends StatelessWidget {
                                   onTap: () async {
                                     //   final String? promoCode = homeProvider.coupnResponse!.discount!.code;
                                     showDraggableSheet(
-                                          context,
-                                          child: ProfileWidget(
-                                           
-                                          ),
-                                        );
+                                      context,
+                                      child: ProfileWidget(),
+                                    );
                                   },
                                   child: Row(
                                     children: [
@@ -346,6 +374,17 @@ class RideSelectionSheet extends StatelessWidget {
                             color: AppColor.primaryYellow,
                             child: GestureDetector(
                               onTap: () async {
+                                if (homeProvider.selectedPayment == "Wallet" &&
+                                    (profile.userDetails?.wallet ?? 0.0) <
+                                        homeProvider.selectedVehiclePrice) {
+                                  AppSnackBar.show(
+                                    context,
+                                    message:
+                                        "You do not have enough balance...,  Switch to Cash",
+                                  );
+                                  return;
+                                }
+
                                 final result = await homeProvider.createRide(
                                   id,
                                 );
@@ -365,7 +404,7 @@ class RideSelectionSheet extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
-                                  child:  Text(
+                                  child: Text(
                                     "Book Ride",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -380,7 +419,7 @@ class RideSelectionSheet extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 35),
+                    // SizedBox(height: 35),
                   ],
                 ),
 
@@ -412,53 +451,3 @@ class RideSelectionSheet extends StatelessWidget {
     );
   }
 }
-
-// class _LocationTextField extends StatelessWidget {
-//   final IconData icon;
-//   final Color iconColor;
-//   final String hint;
-//   final String value;
-
-//   const _LocationTextField({
-//     required this.icon,
-//     required this.iconColor,
-//     required this.hint,
-//     required this.value,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       height: 44, 
-//       child: TextField(
-//         readOnly: true,
-//         controller: TextEditingController(text: value),
-//         style: const TextStyle(
-//           fontSize: 13,
-//           fontWeight: FontWeight.w500,
-//         ),
-//         decoration: InputDecoration(
-//           prefixIcon: Icon(icon, color: iconColor, size: 20),
-//           hintText: hint,
-//           isDense: true, 
-//           contentPadding: const EdgeInsets.symmetric(vertical: 10),
-//           enabledBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(10),
-//             borderSide: const BorderSide(
-//               color: AppColor.primaryYellow, 
-//               width: 1.2,
-//             ),
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(10),
-//             borderSide: const BorderSide(
-//               color: AppColor.primaryYellow,
-//               width: 1.4,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-

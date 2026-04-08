@@ -11,16 +11,13 @@ class OlaMoneyProvider extends ChangeNotifier {
   final upiIdController = TextEditingController();
   final noteController = TextEditingController();
 
-
   OlaPaymentStatusHistory? _olaPaymentStatusHistory;
 
   UpiPayemntResponseModel? adminUpiDetails;
   bool isLoading = false;
 
-
-
-  OlaPaymentStatusHistory? get olaPaymentStatusHistory  =>_olaPaymentStatusHistory;
-
+  OlaPaymentStatusHistory? get olaPaymentStatusHistory =>
+      _olaPaymentStatusHistory;
 
   // -------------------------------Get admin payment Details----------------------
 
@@ -49,8 +46,6 @@ class OlaMoneyProvider extends ChangeNotifier {
       );
     }
   }
-
-
 
   // -------------------------------Recharge your walllet----------------------
   Future<ApiResponse> walletRecharge() async {
@@ -92,25 +87,17 @@ class OlaMoneyProvider extends ChangeNotifier {
     }
   }
 
-
-
-
   // -------------------------------Check your pending payment status----------------------
-
 
   Future<ApiResponse> olaMoneyPayHistoryStatus() async {
     isLoading = true;
     notifyListeners();
 
-    debugPrint(
-      "amount ${amountController.text} trnasection id: ${transectionIdController.text} upicontroller : ${upiIdController.text} note : ${noteController.text}",
-    );
-
     try {
       final response = await repository.oldMoneyPaymentStatusHistory();
 
       if (response.data != null) {
-       _olaPaymentStatusHistory =response.data;
+        _olaPaymentStatusHistory = response.data;
       }
 
       debugPrint("ola print : $_olaPaymentStatusHistory");

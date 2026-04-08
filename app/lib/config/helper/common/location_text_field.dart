@@ -18,7 +18,7 @@ class LocationTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 44, 
-      child: TextField(
+      child: TextFormField(
         readOnly: true,
         controller: TextEditingController(text: value),
         style: const TextStyle(

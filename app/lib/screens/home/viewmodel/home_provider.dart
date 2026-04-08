@@ -6,7 +6,8 @@ import 'package:app/config/map/map_constants.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/home/model/coupon_model.dart';
 import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_request_model.dart';
-import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart' hide Location;
+import 'package:app/screens/home/model/estimate_response_model.dart/ride_estimate_result_model.dart'
+    hide Location;
 import 'package:app/screens/home/model/get_due_payment_model.dart';
 import 'package:app/screens/home/model/near_by_driver_model.dart' hide Location;
 import 'package:app/screens/home/model/ride_accepted_socket_model.dart'
@@ -34,6 +35,7 @@ enum HomeFlow {
 }
 
 class HomeProvider extends ChangeNotifier {
+  TextEditingController desinationController = TextEditingController();
   final HomeRepository homeRepository = HomeRepository();
   final LocationService _locationService = LocationService();
 
@@ -49,6 +51,7 @@ class HomeProvider extends ChangeNotifier {
   String vehicleType = "";
   String selectedPayment = "Cash";
   GetDuePaymentModel? _duePayment;
+  double selectedVehiclePrice=0.0;
   // ReachedDestinationSocket? _reachedDestinationSocket;
 
   RideEstimateResultModel? get allEstimatedResult => _allEstemiateREsult;
@@ -113,14 +116,14 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void joinRoom(String rideId){
+  void joinRoom(String rideId) {
     debugPrint("join rooom");
-      SocketService().joinRoom(rideId);
+    SocketService().joinRoom(rideId);
   }
 
-    void sendMessages(String rideId , String message){
+  void sendMessages(String rideId, String message) {
     debugPrint("join rooom");
-      SocketService().sendMessage(rideId , message);
+    SocketService().sendMessage(rideId, message);
   }
 
   //  void rideCompleted() {
@@ -135,71 +138,16 @@ class HomeProvider extends ChangeNotifier {
   }
   //----------------------------------Map created---------------------------------------------
 
-  final Set<Marker> _markers = {};
-  final Set<Polyline> _polylines = {};
 
-  Set<Marker> get markers => _markers;
-  Set<Polyline> get polylines => _polylines;
-  // GoogleMapController? _mapController;
 
-  final Completer<GoogleMapController> _mapController = Completer();
-
-  void onMapCreated(GoogleMapController mapController) {
-    // _mapController = mapController;
-
-    _mapController.complete(mapController);
-
-    print(
-      "location lat and long : ${position!.latitude} ${position!.longitude}",
-    );
-
-    // If location already exists, move camera
-    if (position != null) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _addUserMarker(); // Add marker first
-        //  _moveCameraToUser(); // Then move camera
-      });
-    }
-    notifyListeners();
-  }
-
-  // void _moveCameraToUser() {
-  //   _mapController?.animateCamera(
-  //     CameraUpdate.newCameraPosition(
-  //       CameraPosition(
-  //         target: LatLng(position!.latitude, position!.longitude),
-  //         zoom: 12,
-  //         tilt: 45,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  void _addUserMarker() {
-    if (position == null) return;
-
-    _markers.clear();
-    _markers.add(
-      Marker(
-        markerId: const MarkerId('user'),
-        position: LatLng(position!.latitude, position!.longitude),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      ),
-    );
-    notifyListeners();
-  }
+ 
   // ================= ROUTE DRAW =================
 
   Future<void> onRideAccepted(RideAcceptedSocketModel data) async {
-    debugPrint("🧠 Provider received rideAccepted event");
-    debugPrint("📍 Pickup: ${data.ride.pickupLocation}");
-    debugPrint("📍 Drop: ${data.ride.dropLocation}");
     confiremRideDetails = data;
-    debugPrint("Data is : $confiremRideDetails");
-    await _drawRouteFromRide(confiremRideDetails!);
-
     _flow = HomeFlow.accepted;
     debugPrint("🔄 Flow changed to ACCEPTED");
+    debugPrint("Data is : $confiremRideDetails");
 
     notifyListeners();
   }
@@ -217,55 +165,20 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _drawRouteFromRide(RideAcceptedSocketModel data) async {
-    final pickupCoords = data.ride.pickupLocation;
-    final dropCoords = data.ride.dropLocation;
-
-    // ✅ CORRECT ORDER
-    final pickup = LatLng(pickupCoords[0], pickupCoords[1]);
-    final drop = LatLng(dropCoords[0], dropCoords[1]);
-
-    debugPrint("🛣 Drawing route");
-    debugPrint("➡ Pickup: $pickup");
-    debugPrint("➡ Drop: $drop");
-
-    final result = await polylinePoints.getRouteBetweenCoordinatesV2(
-      request: RoutesApiRequest(
-        origin: PointLatLng(pickup.latitude, pickup.longitude),
-        destination: PointLatLng(drop.latitude, drop.longitude),
-        travelMode: TravelMode.driving,
-      ),
-    );
-
-    if (result.routes.isEmpty) {
-      debugPrint("❌ Google returned no routes");
-      return;
-    }
-
-    final points = result.routes.first.polylinePoints!;
-    debugPrint("✅ Polyline points count: ${points.length}");
-
-    _polylines.clear();
-
-    _polylines.add(
-      Polyline(
-        polylineId: const PolylineId('ride_route'),
-        color: Colors.green,
-        width: 6,
-        points: points.map((p) => LatLng(p.latitude, p.longitude)).toList(),
-      ),
-    );
-
-    notifyListeners();
-  }
-
   //----------------------------------Estimate API Call---------------------------------------
 
   bool loading = false;
 
-  Future<ApiResponse> getAllEstimtedData() async {
+  Future<ApiResponse> getAllEstimtedData({
+    required String pickupAddress,
+    required double pickupLat,
+    required double pickupLng,
+    required String dropAddress,
+    required double dropLat,
+    required double dropLng,
+  }) async {
     print(
-      "location lat and long : ${position!.latitude} ${position!.longitude}",
+      "location lat and long :$pickupAddress $pickupLat $pickupLng $dropAddress $dropLat $dropLng",
     );
     loading = true;
     notifyListeners();
@@ -320,9 +233,9 @@ class HomeProvider extends ChangeNotifier {
   //--------------------------------------Ride Create --------------------------------
 
   Future<ApiResponse<RideCreatedResposeModel>> createRide(String id) async {
-    debugPrint(
-      "ride id : $id ${position!.latitude}. ....${position!.longitude} $vehicleType. ${selectedPayment.toString().toLowerCase()}",
-    );
+    // debugPrint(
+    //   "ride id : $id ${position!.latitude}. ....${position!.longitude} $vehicleType. ${selectedPayment.toString().toLowerCase()}",
+    // );
     loading = true;
     notifyListeners();
 
@@ -339,9 +252,7 @@ class HomeProvider extends ChangeNotifier {
 
       loading = false;
 
-      debugPrint(
-        "Data :... ${response.data!.estimatedTime} ${response.message} ${response.success}",
-      );
+     
       return response;
       // return ApiResponse(success: response.success, message: response.message);
     } catch (e) {

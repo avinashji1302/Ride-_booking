@@ -2,14 +2,21 @@ import 'package:app/config/Socket/socket.dart';
 import 'package:app/config/storage/auth_storage.dart';
 import 'package:app/config/theme/theme_provider.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
+import 'package:app/screens/Auth/ViewModel/reset_password_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
 import 'package:app/screens/Auth/ViewModel/sign_in_provider.dart';
 import 'package:app/screens/Auth/ViewModel/signup_provider.dart';
+import 'package:app/screens/address/viewmodel/address_provider.dart';
 import 'package:app/screens/appStart/view/welcome.dart';
 import 'package:app/screens/audio/viewmodel/audiocall_provider.dart';
 import 'package:app/screens/chat/viewModel/chat_provider.dart';
+import 'package:app/screens/faq/viewmodel/faq_provider.dart';
+import 'package:app/screens/help/viewmodel/help_provider.dart';
 import 'package:app/screens/home/view/home_page.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
+import 'package:app/screens/landingPage/view/landing_page.dart';
+import 'package:app/screens/landingPage/viewModel/landing_provider.dart';
+import 'package:app/screens/notification/viewmodel/notification_provider.dart';
 import 'package:app/screens/ola_money/view_model/ola_money_provider.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 // import 'package:firebase_core/firebase_core.dart';
@@ -36,10 +43,16 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
+         ChangeNotifierProvider(create: (_) => ResetPasswordProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => OlaMoneyProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+         ChangeNotifierProvider(create: (_) => LandingProvider()),
+          ChangeNotifierProvider(create: (_) => FaqProvider()),
+            ChangeNotifierProvider(create: (_) => HelpProvider()),
+             ChangeNotifierProvider(create: (_) => NotificationProvider()),
+               ChangeNotifierProvider(create: (_) => AddressProvider()),
         // ChangeNotifierProvider(create: (_) => ChatProvider.instance),
         ChangeNotifierProvider.value(value: ChatProvider.instance),
                 ChangeNotifierProvider(create: (_) => AudioCallProvider()),
@@ -123,9 +136,9 @@ class _AuthCheckState extends State<AuthCheck> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator(color: Colors.grey,)));
     }
 
-    return _isLoggedIn ? const HomePage() : const WelcomeScreen();
+    return _isLoggedIn ? const LandingPage() : const WelcomeScreen();
   }
 }

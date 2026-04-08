@@ -1,8 +1,7 @@
 import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/config/validars/validators.dart';
-import 'package:app/screens/Auth/View/signIn/forget_pasword_page.dart';
-import 'package:app/screens/Auth/View/signIn/forgetten_password_list.dart';
+
 import 'package:app/screens/Auth/View/signIn/otp_page_varififcation.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
 import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
@@ -17,7 +16,7 @@ class VarifyEmailPhonePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Varify'),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -37,11 +36,13 @@ class VarifyEmailPhonePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: 10),
-                      Text(
-                        "Varify the email or phone number",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
+                      Center(
+                        child: Text(
+                          "Varify the email",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       SizedBox(height: 10),

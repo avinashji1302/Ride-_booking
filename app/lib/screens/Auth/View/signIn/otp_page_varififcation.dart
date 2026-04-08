@@ -2,8 +2,8 @@ import 'package:app/config/colors/app_color.dart';
 import 'package:app/config/helper/common/top_snacbar.dart';
 import 'package:app/screens/Auth/View/signIn/set_password_page.dart';
 import 'package:app/screens/Auth/ViewModel/forget_password_provider.dart';
-import 'package:app/screens/Auth/ViewModel/sign_up_phone_varification_provider.dart';
-import 'package:app/screens/Auth/model/forget_passowrd_model.dart';
+
+import 'package:app/screens/Auth/widgets/inputfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,17 +49,9 @@ class OtpPageVarififcation extends StatelessWidget {
         
                       const SizedBox(height: 40),
         
-                      /// OTP boxes
-                      // TextField(
-                      //   controller: controller.otpController,
-                      //   keyboardType: TextInputType.number,
-                      //   maxLength: 6,
-                      //   decoration: const InputDecoration(
-                      //     hintText: "Enter OTP",
-                      //     border: OutlineInputBorder(),
-                      //     counterText: "",
-                      //   ),
-                      // ),
+                       /// OTP boxes
+                      InputFieldWidget(hint: "Enter your OTP", controller: controller.otpController , keyboardType: TextInputType.numberWithOptions(),),
+        
         
                       const SizedBox(height: 20),
         
@@ -123,8 +115,7 @@ class OtpPageVarififcation extends StatelessWidget {
                                   height: 20,
                                   width: 20,
                                   child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
+                                color: Colors.grey,
                                   ),
                                 )
                               :  Text(

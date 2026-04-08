@@ -5,26 +5,28 @@ import 'package:app/screens/Auth/model/otp_varify_model.dart';
 import 'package:app/screens/Auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 
+
 class SignUpPhoneVarificationProvider extends ChangeNotifier {
+
   final AuthRepository _repo = AuthRepository();
   final AuthStorage _storage = AuthStorage();
 
-  final TextEditingController otpMobile = TextEditingController();
+  final TextEditingController otpMobile = TextEditingController(text: "1234");
 
   bool loading = false;
-  String? error;
 
   Future<ApiResponse> verifyOtp({
     required String mobileOtpId,
     required String emailOtpId,
   }) async {
-    final deviceId = await DeviceDetails.getDeviceId();
 
     loading = true;
-    error = null;
     notifyListeners();
 
     try {
+
+      final deviceId = await DeviceDetails.getDeviceId();
+
       final response = await _repo.verifySignUpOtp(
         VerifyOtpRequest(
           deviceId: deviceId,
@@ -32,8 +34,8 @@ class SignUpPhoneVarificationProvider extends ChangeNotifier {
           emailOtpId: emailOtpId,
           otpMobile: otpMobile.text.trim(),
           otpEmail: otpMobile.text.trim(),
-          deviceType: 'android',
-          deviceToken: '',
+          deviceType: "android",
+          deviceToken: "",
         ),
       );
 
@@ -41,27 +43,19 @@ class SignUpPhoneVarificationProvider extends ChangeNotifier {
       notifyListeners();
 
       if (!response.success || response.data == null) {
-        return ApiResponse(
-          success: false,
-          message: response.message,
-        );
+        return ApiResponse(success: false, message: response.message);
       }
 
-      final authResult = response.data!;
-
       await _storage.saveSession(
-        accessToken: authResult.token,
-        refreshToken: authResult.refreshToken,
+        accessToken: response.data!.token,
+        refreshToken: response.data!.refreshToken,
       );
 
-      return ApiResponse(
-        success: true,
-        message: response.message,
-        data: authResult,
-      );
+      return ApiResponse(success: true, message: response.message);
+
     } catch (e) {
+
       loading = false;
-      error = e.toString();
       notifyListeners();
 
       return ApiResponse(

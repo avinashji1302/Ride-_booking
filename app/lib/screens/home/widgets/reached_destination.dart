@@ -31,16 +31,6 @@ class ReachedDestination extends StatelessWidget {
           });
         }
 
-        // if (controller.flow == HomeFlow.rideCompleted &&
-        //     !controller.userRideComplete) {
-        //   debugPrint("inside.......... ${controller.flow}");
-        //   controller.userRideComplete = true;
-
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     rideCompleted(context);
-        //     controller.goBackToSearch();
-        //   });
-        // }
        
         return DraggableScrollableSheet(
           initialChildSize: 0.5,

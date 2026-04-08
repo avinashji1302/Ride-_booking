@@ -23,7 +23,7 @@ class OlaMoneyRepository {
       },
     );
 
-    debugPrint(("Rawa data Ride estimate : ${response.body}"));
+    debugPrint(("Admin DEtails Raw : ${response.body}"));
     final json = jsonDecode(response.body);
 
     return ApiResponse<UpiPayemntResponseModel>.fromJson(
