@@ -9,6 +9,8 @@ class CommonTextField extends StatelessWidget {
   final String? value;
       bool? autoFocus = false;
 
+  final ValueChanged<String>? onChanged;
+
    CommonTextField({
     super.key,
     this.controller,
@@ -16,7 +18,8 @@ class CommonTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
     this.value,
-    this.autoFocus
+    this.autoFocus,
+    this.onChanged
   });
 
   @override
@@ -24,6 +27,7 @@ class CommonTextField extends StatelessWidget {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
+      onChanged:onChanged ,
       keyboardType: keyboardType,
       maxLines: maxLines,
        autofocus: autoFocus??false,

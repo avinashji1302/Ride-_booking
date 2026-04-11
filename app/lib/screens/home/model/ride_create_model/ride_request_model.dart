@@ -2,8 +2,8 @@
 // ==================== REQUEST MODEL ====================
 
 class RideCreatedRequestModel {
-  final Location pickupLocation;
-  final Location dropLocation;
+  final LocationPoints pickupLocation;
+  final LocationPoints dropLocation;
   final String vehicleType;
   final String paymentMethod;
 
@@ -24,11 +24,11 @@ class RideCreatedRequestModel {
   }
 }
 
-class Location {
+class LocationPoints {
   final String type;
   final List<double> coordinates;
 
-  Location({
+  LocationPoints({
     this.type = "Point",
     required this.coordinates,
   });

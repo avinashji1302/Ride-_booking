@@ -4,7 +4,8 @@ import 'package:app/config/map/map_constants.dart';
 import 'package:app/screens/home/viewmodel/home_provider.dart';
 import 'package:app/screens/landingPage/viewModel/landing_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 class SearchRideScreen extends StatefulWidget {
@@ -28,24 +29,24 @@ class _SearchRidePageState extends State<SearchRideScreen> {
 
   List<String> filteredList = [];
 
-    @override
-    void initState() {
-      super.initState();
-      // ✅ Read from provider — address is now always live
-      final address = context.read<LandingProvider>().currentAddress;
-      pickupController = TextEditingController(
-        text: address.isNotEmpty ? address : "Current Location",
-      );
-      filteredList = recommendations;
-    }
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Read from provider — address is now always live
+    final address = context.read<LandingProvider>().currentAddress;
+    pickupController = TextEditingController(
+      text: address.isNotEmpty ? address : "Current Location",
+    );
+    filteredList = recommendations;
+  }
 
-    void searchPlace(String value) {
-      filteredList = recommendations
-          .where((e) => e.toLowerCase().contains(value.toLowerCase()))
-          .toList();
+  void searchPlace(String value) {
+    filteredList = recommendations
+        .where((e) => e.toLowerCase().contains(value.toLowerCase()))
+        .toList();
 
-      setState(() {});
-    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,11 +134,6 @@ class _SearchRidePageState extends State<SearchRideScreen> {
                     );
 
                     debugPrint("oriin : $origin desination $destination ");
-
-                    MapRouteService.getRoute(
-                      origin: origin,
-                      destination: destination,
-                    );
 
                     Navigator.pop(context, {
                       "pickup": pickupController.text,

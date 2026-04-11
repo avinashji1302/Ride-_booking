@@ -28,25 +28,21 @@ class WaitingForDriverSheet extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
 
-              
-
               const SizedBox(height: 30),
               const LinearProgressIndicator(color: AppColor.primaryYellow),
-
-              const SizedBox(height: 50),
+              const SizedBox(height: 30),
 
               /// Driver Searching Animation
               CircleAvatar(
-                radius: 60,
+                radius: 40,
                 child: GestureDetector(
-                  onTap: () async{
-                     final result = await controller.cancelRide(
-                          controller.confiremRideDetails!.ride.id,
-                          "selectedReason",
-                        );
+                  onTap: () async {
+                    final result = await controller.cancelRide(
+                      controller.confiremRideDetails!.ride.id,
+                      "selectedReason",
+                    );
 
-
-                        debugPrint("canceled: ${result} ${result.message}");
+                    debugPrint("canceled: ${result} ${result.message}");
                   },
                   child: SizedBox(
                     height: 420,

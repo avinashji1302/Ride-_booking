@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/config/device/location_permission.dart';
 import 'package:app/config/network/api_repsonse.dart';
 import 'package:app/screens/landingPage/model.dart/bannner_model.dart';
@@ -5,9 +7,10 @@ import 'package:app/screens/landingPage/model.dart/category_model.dart';
 import 'package:app/screens/landingPage/reposotory/landing_repository.dart';
 import 'package:app/screens/profile/viewmodel/logout_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:latlong2/latlong.dart';
 
 import 'package:provider/provider.dart';
 
@@ -17,6 +20,8 @@ class LandingProvider extends ChangeNotifier {
   final LocationService _locationService = LocationService();
 
   final TextEditingController destinationController = TextEditingController();
+ 
+  // final MapController _mapController = MapController();
 
   BannerResultModel? allBanner;
   int _index = 0;
@@ -46,6 +51,9 @@ class LandingProvider extends ChangeNotifier {
 
     debugPrint("location Service.... $position");
   }
+
+
+
 
   //---------------------Convert current position into address text --------------------
 

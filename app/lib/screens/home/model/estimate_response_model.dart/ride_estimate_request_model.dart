@@ -1,6 +1,4 @@
 class RideEstimateRequestModel {
-
-
   final RideLocation pickupLocation;
   final RideLocation dropLocation;
 
@@ -31,10 +29,8 @@ class RideLocation {
   Map<String, dynamic> toJson() {
     return {
       "type": "Point",
-      "coordinates": [ longitude , latitude],
+      "coordinates": [latitude, longitude],
       "address": address,
     };
   }
 }
-
-
